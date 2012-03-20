@@ -1,7 +1,7 @@
-== Neo4j-wrapper
+== Neo4j-wrapper {<img src="https://secure.travis-ci.org/andreasronge/neo4j-wrapper.png" />}[http://travis-ci.org/andreasronge/neo4j-wrapper]
 
 This contains the Ruby wrapper of the Neo4j::Node and Neo4j::Relationship java object defined in the neo4j-core gem.
-The neo4j.rb gem will be split up into three gems, neo4j-core, neo4j-wrapper and neo4j-rails
+The neo4j.rb gem will be split up into several gems, neo4j-core, neo4j-wrapper and neo4j-rails (?)
 This gem will be included by neo4j 2.0.0 gem.
 
 Changes from the neo4j.rb
@@ -20,4 +20,5 @@ The Neo4j module is public and the Neo4j::Wrapper(::*) are private modules.
 
 {Neo4j::RelationshipMixin} The Java Relationship
 
+{Neo4j::IdentityMap} The Identity Map
 
