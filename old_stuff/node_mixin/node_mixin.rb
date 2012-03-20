@@ -73,7 +73,6 @@ module Neo4j
       self.class.trigger_rules(self)
     end
 
-
     def _decl_rels_for(rel_type)
       self.class._decl_rels[rel_type]
     end
@@ -81,14 +80,6 @@ module Neo4j
     # Returns self. Implements the same method as the Neo4j::Node#wrapper - duck typing.
     def wrapper
       self
-    end
-
-    def pagination_source(*a)
-      binding.pry
-    end
-
-    def self.pagination_source(*a)
-      binding.pry
     end
 
     def self.included(c) # :nodoc:
