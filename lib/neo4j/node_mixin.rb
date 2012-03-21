@@ -38,6 +38,20 @@ module Neo4j
         trigger_on :_classname => klass.to_s
       end
 
+      def klass.inherited(sub_klass)
+        index_name = sub_klass.to_s.gsub("::", '_')
+        base_class = self
+
+        # make the base class trigger on the sub class nodes
+        base_class._indexer.config.trigger_on :_classname => sub_klass.to_s
+
+        sub_klass.node_indexer do
+          inherit_from base_class
+          index_names :exact => "#{index_name}_exact", :fulltext => "#{index_name}_fulltext"
+          trigger_on :_classname => sub_klass.to_s
+        end
+        super
+      end
     end
 
     # TODO
