@@ -9,15 +9,23 @@ describe Neo4j::Wrapper::NodeMixin::Initialize do
       def self.to_s
         "MyClass"
       end
-
-      def _java_entity
-        @_x ||= {}
-      end
     end
     klass.new
   end
 
+  describe "#init_on_load" do
+    it "stores the node" do
+      subject.init_on_load("Foo")
+      subject._java_node.should == "Foo"
+      subject._java_entity.should == "Foo"
+    end
+  end
+
   describe "#init_on_create" do
+    before do
+      subject.init_on_load({})
+    end
+
     it "sets the _classname _java_entity property" do
       subject.init_on_create
       subject._java_entity[:_classname].should == "MyClass"

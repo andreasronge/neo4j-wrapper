@@ -31,9 +31,6 @@ module Neo4j
         delegate :props
 
         # @macro  node.delegate
-        delegate :attributes
-
-        # @macro  node.delegate
         delegate :update
 
         # @macro  node.delegate
