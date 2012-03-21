@@ -14,7 +14,7 @@ module Neo4j
         # You can override this to provide your own initialization.
         #
         # @param [Object, :each_pair] args if the first item in the list implements :each_pair then it will be initialize with those properties
-        def init_on_create(*args) # :nodoc:
+        def init_on_create(*args)
           _java_entity[:_classname] = self.class.to_s
           if args[0].respond_to?(:each_pair)
             args[0].each_pair { |k, v| respond_to?("#{k}=") ? self.send("#{k}=", v) : _java_entity[k] = v }
