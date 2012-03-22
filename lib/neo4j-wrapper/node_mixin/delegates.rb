@@ -9,7 +9,7 @@ module Neo4j
           #   @method $1(*args, &block)
           #   Delegates the `$1` message to <tt>_java_entity</tt> instance with the supplied parameters.
           #   @see Neo4j::NodeMixin#_java_entity
-          #   @see http://rdoc.info/github/andreasronge/neo4j-core/master/Neo4j/Node Neo4j::Core::Node#$1
+          #   @see http://rdoc.info/github/andreasronge/neo4j-core/master/Neo4j/Node Neo4j::Core::Node
           def delegate(method_name)
             class_eval(<<-EOM, __FILE__, __LINE__)
               def #{method_name}(*args, &block)
