@@ -28,12 +28,6 @@ module Neo4j
 
         alias_method :_java_entity, :_java_node
 
-        # Returns self. Implements the same method as the Neo4j::Node#wrapper - duck typing.
-        # @return self
-        def wrapper
-          self
-        end
-
       end
     end
   end

@@ -2,8 +2,7 @@ require 'spec_helper'
 
 describe "Neo4j::NodeMixin index", :type => :integration do
 
-  let(:klass_name) { 'Foo123::Bar' }
-  let(:klass) { MockNodeMixinClass.new(klass_name) }
+  let(:klass) { new_node_mixin_class }
 
   context "class Foo123::Bar - index :foo" do
     subject do
@@ -13,8 +12,8 @@ describe "Neo4j::NodeMixin index", :type => :integration do
 
     its(:index?, :foo) { should be_true }
     its(:index_type, :foo) { should == :exact }
-    its(:to_s) { should == "Foo123::Bar" }
-    its(:index_name_for_type, :exact) { should == "Foo123_Bar_exact" }
+    its(:to_s) { should == klass.to_s }
+    its(:index_name_for_type, :exact) { should == "#{klass.to_s}_exact" }
     its(:_indexer) { should be_kind_of(Neo4j::Core::Index::Indexer) }
 
     describe "find" do
@@ -83,7 +82,6 @@ describe "Neo4j::NodeMixin index", :type => :integration do
       end
 
       it "should return the correct class" do
-        pending
         new_tx
         node = SubClass1.new(:sub_foo => 'foo3', :base_foo => 'foo3')
         finish_tx

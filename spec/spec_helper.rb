@@ -78,3 +78,29 @@ RSpec.configure do |c|
     Neo4j::Core::Database.default_embedded_db = nil
   end
 end
+
+
+module TempModel
+  @@_counter = 1
+
+  def self.set(klass)
+    name = "TestClass_#{@@_counter}"
+    @@_counter += 1
+    klass.class_eval <<-RUBY
+        def self.to_s
+          "#{name}"
+        end
+        include Neo4j::NodeMixin
+    RUBY
+    Kernel.const_set(name, klass)
+    klass
+  end
+end
+
+def new_node_mixin_class(base_class = Object, &block)
+  klass = Class.new(base_class)
+  TempModel.set(klass)
+  base_class.inherited(klass) if base_class.respond_to?(:inherited)
+  klass.class_eval(&block) if block
+  klass
+end

@@ -16,6 +16,7 @@ module Neo4j
   # {render:Neo4j::Wrapper::NodeMixin::ClassMethods#new}
   #
   # = Class Method Modules
+  # * {Neo4j::Wrapper::ClassMethods}
   # * {Neo4j::Wrapper::NodeMixin::ClassMethods}
   # * {http://rdoc.info/github/andreasronge/neo4j-core/master/Neo4j/Core/Index/ClassMethods Neo4j::Core::Index::ClassMethods}
   #
@@ -26,8 +27,10 @@ module Neo4j
     include Neo4j::Wrapper::NodeMixin::Initialize
     include Neo4j::Core::Index
 
+
     # @private
     def self.included(klass)
+      klass.extend Neo4j::Wrapper::ClassMethods
       klass.extend Neo4j::Wrapper::NodeMixin::ClassMethods
       klass.extend Neo4j::Core::Index::ClassMethods
 

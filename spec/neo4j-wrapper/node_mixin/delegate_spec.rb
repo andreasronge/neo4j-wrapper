@@ -36,7 +36,7 @@ describe Neo4j::Wrapper::NodeMixin::Delegates do
 
     its(:_java_entity) { should == java_node }
     its(:[], :_classname) { should == "MyKlass" }
-    its(:props) { should == {"_classname" => "MyKlass"} }
+    its(:props) { should == {:_classname => "MyKlass"} }
     its(:property?, :foo) { should be_false }
     it "[]= sets property" do
       subject[:foo] = "bar"

@@ -2,6 +2,7 @@ module Neo4j
   module Wrapper
     module NodeMixin
       module Delegates
+
         class << self
           private
           # @macro  [new] node.delegate
