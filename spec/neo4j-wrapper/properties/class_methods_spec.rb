@@ -9,7 +9,9 @@ describe Neo4j::Wrapper::Property::ClassMethods do
   end
 
   let(:sub) do
-    Class.new(base)
+    s = Class.new(base)
+    s.inherited(base)
+    s
   end
 
   context "for a base class" do
@@ -17,10 +19,9 @@ describe Neo4j::Wrapper::Property::ClassMethods do
       before do
         base.property :foo
       end
-      subject { base }
 
       it "has a property" do
-        subject.property?(:foo).should be_true
+        base.property?(:foo).should be_true
       end
     end
   end

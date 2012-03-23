@@ -4,11 +4,13 @@ module Neo4j
 
       module ClassMethods
 
-        # Creates the <tt>_decl_props</tt> inheritable accessor method.
-        # @private
-        def self.extended(klass)
-          klass.class_inheritable_accessor :_decl_props
-          klass._decl_props ||= {}
+        def _decl_props
+          @_decl_props ||= {}
+        end
+
+        def inherited(klass)
+          klass.instance_variable_set(:@_decl_props, _decl_props.clone)
+          super
         end
 
         # Generates accessor method and sets configuration for Neo4j node properties.

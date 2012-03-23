@@ -1,8 +1,5 @@
 require 'neo4j-core'
 
-require 'neo4j/core_ext/array/extract_options'
-require 'neo4j/core_ext/class/rewrite_inheritable_attributes'
-require 'neo4j/core_ext/object/duplicable'
 require 'neo4j-wrapper/wrapper'
 require 'neo4j-wrapper/class_methods'
 require 'neo4j-wrapper/version'

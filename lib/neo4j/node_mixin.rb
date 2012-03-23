@@ -34,10 +34,6 @@ module Neo4j
       klass.extend Neo4j::Wrapper::NodeMixin::ClassMethods
       klass.extend Neo4j::Core::Index::ClassMethods
 
-      # TODO
-      #klass.class_inheritable_accessor :_decl_rels
-      #klass._decl_rels ||= {}
-
       index_name = klass.to_s.gsub("::", '_')
 
       klass.node_indexer do
@@ -59,6 +55,7 @@ module Neo4j
         end
         super
       end
+      super
     end
 
     # TODO
