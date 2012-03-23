@@ -18,6 +18,8 @@ module Neo4j
   # = Class Method Modules
   # * {Neo4j::Wrapper::ClassMethods}
   # * {Neo4j::Wrapper::NodeMixin::ClassMethods}
+  # * {Neo4j::Wrapper::Property::ClassMethods}
+  # * {Neo4j::Wrapper::HasN::ClassMethods}
   # * {http://rdoc.info/github/andreasronge/neo4j-core/master/Neo4j/Core/Index/ClassMethods Neo4j::Core::Index::ClassMethods}
   #
   # = Instance Method Modules
@@ -25,6 +27,7 @@ module Neo4j
   module NodeMixin
     include Neo4j::Wrapper::NodeMixin::Delegates
     include Neo4j::Wrapper::NodeMixin::Initialize
+    include Neo4j::Wrapper::HasN::InstanceMethods
     include Neo4j::Core::Index
 
 
@@ -32,6 +35,8 @@ module Neo4j
     def self.included(klass)
       klass.extend Neo4j::Wrapper::ClassMethods
       klass.extend Neo4j::Wrapper::NodeMixin::ClassMethods
+      klass.extend Neo4j::Wrapper::Property::ClassMethods
+      klass.extend Neo4j::Wrapper::HasN::ClassMethods
       klass.extend Neo4j::Core::Index::ClassMethods
 
       index_name = klass.to_s.gsub("::", '_')

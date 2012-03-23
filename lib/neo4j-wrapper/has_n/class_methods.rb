@@ -60,7 +60,7 @@ module Neo4j
           module_eval(%Q{
                 def #{rel_type}
                     dsl = _decl_rels_for('#{rel_type}'.to_sym)
-                    Neo4j::Wrapper::HasN::Mapping.new(self, dsl)
+                    Neo4j::Wrapper::HasN::Nodes.new(self, dsl)
                 end}, __FILE__, __LINE__)
 
 
