@@ -31,6 +31,40 @@ describe Neo4j::Wrapper::HasN::DeclRel do
     end
   end
 
+  describe "#create_relationship_to" do
+
+    context "outgoing relationship" do
+      it "creates a new relationship" do
+        from = MockNode.new
+        to = MockNode.new
+        Neo4j::Relationship.should_receive(:new).with("friends", from, to)
+        decl_rel.create_relationship_to(from, to)
+      end
+    end
+
+    context "incoming relationship" do
+      it "creates a new relationship" do
+        from = MockNode.new
+        to = MockNode.new
+        decl_rel.from(:bla)
+        Neo4j::Relationship.should_receive(:new).with("bla", to, from)
+        decl_rel.create_relationship_to(from, to)
+      end
+    end
+
+    context "a defined relationship class" do
+      it "should create a new relationship mixin wrapper" do
+        from = MockNode.new
+        to = MockNode.new
+        rel_wrapper = Class.new
+        decl_rel.relationship(rel_wrapper)
+        rel_wrapper.should_receive(:new).with("friends", from, to)
+        decl_rel.create_relationship_to(from, to)
+      end
+    end
+  end
+
+
   describe "#relationship(a_class)" do
     subject do
       decl_rel.relationship(relation_class)

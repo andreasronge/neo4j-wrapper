@@ -251,7 +251,7 @@ module Neo4j
           if relationship_class
             relationship_class.new(@rel_type, from._java_node, to._java_node)
           else
-            from._java_node.create_relationship_to(to._java_node, java_rel_type)
+            Neo4j::Relationship.new(@rel_type, from, to)
           end
         end
 

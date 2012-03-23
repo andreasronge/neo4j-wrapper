@@ -9,13 +9,13 @@ module Neo4j
         include Enumerable
         include Neo4j::Core::ToJava
 
-        def initialize(node, dsl) # :nodoc:
+        def initialize(node, decl_rel) # :nodoc:
           @node = node
-          @dsl = dsl
+          @decl_rel = decl_rel
         end
 
         def to_s
-          "HasN::Nodes [#{@dsl.dir}, id: #{@node.neo_id} type: #{@dsl && @dsl.rel_type} dsl:#{@dsl}]"
+          "HasN::Nodes [#{@decl_rel.dir}, id: #{@node.neo_id} type: #{@decl_rel && @decl_rel.rel_type} decl_rel:#{@decl_rel}]"
         end
 
         # Traverse the relationship till the index position
@@ -35,12 +35,12 @@ module Neo4j
 
         # Required by the Enumerable mixin.
         def each
-          @dsl.each_node(@node) { |n| yield n } # Should use yield here as passing &block through doesn't always work (why?)
+          @decl_rel.each_node(@node) { |n| yield n } # Should use yield here as passing &block through doesn't always work (why?)
         end
 
         # returns none wrapped nodes, you may get better performance using this method
         def _each
-          @dsl._each_node(@node) { |n| yield n }
+          @decl_rel._each_node(@node) { |n| yield n }
         end
 
         # Returns an real ruby array.
@@ -57,7 +57,7 @@ module Neo4j
         # Creates a relationship instance between this and the other node.
         # Returns the relationship object
         def new(other)
-          @dsl.create_relationship_to(@node, other)
+          @decl_rel.create_relationship_to(@node, other)
         end
 
 
@@ -73,7 +73,7 @@ module Neo4j
         #
         # @return self
         def <<(other)
-          @dsl.create_relationship_to(@node, other)
+          @decl_rel.create_relationship_to(@node, other)
           self
         end
       end
