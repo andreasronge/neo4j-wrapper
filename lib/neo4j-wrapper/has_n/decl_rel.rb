@@ -40,7 +40,7 @@ module Neo4j
           @has_one = has_one
           @target_class = target_class
           @dir = :outgoing
-          @rel_type = method_id
+          @rel_type = method_id.to_s
           @source_class = target_class
         end
 
@@ -160,10 +160,10 @@ module Neo4j
             # handle specified (prefixed) relationship, e.g. has_n(:known_by).from(clazz, :type)
             @target_class = args[0]
             @rel_type = "#{@target_class}##{args[1]}"
-            @relationship_name = args[1]
+            @relationship_name = args[1].to_sym
           elsif Symbol === args[0]
             # handle unspecified (unprefixed) relationship, e.g. has_n(:known_by).from(:type)
-            @rel_type = args[0]
+            @rel_type = args[0].to_s
           else
             raise "Expected a symbol for, got #{args[0]}"
           end

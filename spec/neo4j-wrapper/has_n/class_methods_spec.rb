@@ -47,7 +47,7 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
 
       it { should be_kind_of(Neo4j::Wrapper::HasN::DeclRel) }
       its(:has_one?) { should be_false }
-      its(:rel_type) { should == :things }
+      its(:rel_type) { should == "things" }
       its(:target_class) { should == base }
       its(:source_class) { should == base }
       its(:dir) { should == :outgoing }
@@ -63,7 +63,7 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
       end
 
       its(:has_one?) { should be_false }
-      its(:rel_type) { should == :things }
+      its(:rel_type) { should == "things" }
       its(:target_class) { should == base }
       its(:source_class) { should == base }
       its(:dir) { should == :outgoing }
@@ -117,7 +117,7 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
 
       it { should be_kind_of(Neo4j::Wrapper::HasN::DeclRel) }
       its(:has_one?) { should be_false }
-      its(:rel_type) { should == :knows }
+      its(:rel_type) { should == "knows" }
       its(:target_class) { should == base }
       its(:source_class) { should == base }
       its(:dir) { should == :incoming }
