@@ -43,8 +43,8 @@ module Neo4j
         #     property :since, :type => DateTime  # will be converted into a fixnum
         #   end
         #
-        # You can write your own converter by writing a class that respond to :convert?, :to_ruby and
-        # :to_java in the Neo4j::TypeConverters module.
+        # You can write your own converter by writing a class that respond to <tt>:convert?</tt>, <tt>:to_ruby</tt> and
+        # <tt>:to_java</tt> in the Neo4j::TypeConverters module.
         #
         # @param [Symbol, Hash] props one or more properties and optionally last a Hash for options
         # @see http://rdoc.info/github/andreasronge/neo4j-core/master/Neo4j/TypeConverters Neo4j::TypeConverters

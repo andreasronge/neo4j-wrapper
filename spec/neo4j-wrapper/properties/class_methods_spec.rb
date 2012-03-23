@@ -39,5 +39,11 @@ describe Neo4j::Wrapper::Property::ClassMethods do
     it "should inherit the properties" do
       sub.property?(:baaz).should be_true
     end
+
+    it "does not change the base class properties" do
+      sub.property :subp
+      base.property?(:subp).should be_false
+      sub.property?(:subp).should be_true
+    end
   end
 end
