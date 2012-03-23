@@ -6,6 +6,7 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
   let(:base) do
     Class.new do
       extend Neo4j::Wrapper::HasN::ClassMethods
+
       def self.to_s
         "BaseClass"
       end
@@ -16,6 +17,7 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
   let(:other) do
     Class.new do
       extend Neo4j::Wrapper::HasN::ClassMethods
+
       def self.to_s
         "OtherClass"
       end
@@ -34,8 +36,8 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
     end
 
     describe "foo (classmethod)" do
-      subject { base.things}
-      it { should == "things"}
+      subject { base.things }
+      it { should == "things" }
     end
 
     describe "_decl_rels[:things]" do
@@ -50,6 +52,28 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
       its(:source_class) { should == base }
       its(:dir) { should == :outgoing }
     end
+
+    context "inherited class" do
+      subject do
+        sub._decl_rels[:things]
+      end
+      it { should be_kind_of(Neo4j::Wrapper::HasN::DeclRel) }
+      it "should not be the same instance as the base class (of decl_rels)" do
+        should_not == base._decl_rels[:things]
+      end
+
+      its(:has_one?) { should be_false }
+      its(:rel_type) { should == :things }
+      its(:target_class) { should == base }
+      its(:source_class) { should == base }
+      its(:dir) { should == :outgoing }
+
+      it "does not add the decl relationship on the base class" do
+        sub.has_n :new_things
+        base._decl_rels.keys.should == [:things]
+        sub._decl_rels.keys.should == [:things, :new_things]
+      end
+    end
   end
 
   describe "#has_n(:stuff).to(OtherClass)" do
@@ -58,8 +82,8 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
     end
 
     describe "stuff (classmethod)" do
-      subject { base.stuff}
-      it { should == "BaseClass#stuff"}
+      subject { base.stuff }
+      it { should == "BaseClass#stuff" }
     end
 
     describe "_decl_rels[:stuff]" do
@@ -69,7 +93,7 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
 
       it { should be_kind_of(Neo4j::Wrapper::HasN::DeclRel) }
       its(:has_one?) { should be_false }
-      its(:rel_type) { should == "BaseClass#stuff"}
+      its(:rel_type) { should == "BaseClass#stuff" }
       its(:target_class) { should == other }
       its(:source_class) { should == base }
       its(:dir) { should == :outgoing }
@@ -82,8 +106,8 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
     end
 
     describe "stuff (classmethod)" do
-      subject { base.known_by}
-      it { should == "knows"}
+      subject { base.known_by }
+      it { should == "knows" }
     end
 
     describe "_decl_rels[:known_by]" do
@@ -93,7 +117,7 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
 
       it { should be_kind_of(Neo4j::Wrapper::HasN::DeclRel) }
       its(:has_one?) { should be_false }
-      its(:rel_type) { should == :knows}
+      its(:rel_type) { should == :knows }
       its(:target_class) { should == base }
       its(:source_class) { should == base }
       its(:dir) { should == :incoming }
@@ -113,7 +137,7 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
 
       it { should be_kind_of(Neo4j::Wrapper::HasN::DeclRel) }
       its(:has_one?) { should be_false }
-      its(:rel_type) { should == "OtherClass#knows"}
+      its(:rel_type) { should == "OtherClass#knows" }
       its(:target_class) { should == other }
       its(:source_class) { should == base }
       its(:dir) { should == :incoming }
@@ -127,8 +151,8 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
     end
 
     describe "stuff (known_by)" do
-      subject { base.known_by}
-      it { should == "OtherClass#knows"}
+      subject { base.known_by }
+      it { should == "OtherClass#knows" }
     end
 
     describe "_decl_rels[:known_by]" do
@@ -138,51 +162,12 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
 
       it { should be_kind_of(Neo4j::Wrapper::HasN::DeclRel) }
       its(:has_one?) { should be_true }
-      its(:rel_type) { should == "OtherClass#knows"}
+      its(:rel_type) { should == "OtherClass#knows" }
       its(:target_class) { should == other }
       its(:source_class) { should == base }
       its(:dir) { should == :incoming }
     end
   end
 
-#    describe "#property :x, :conf1 => 'val1'" do
-#      before do
-#        base.property :x, :conf1 => 'val1'
-#      end
-#
-#      it "should have configuration for property :x" do
-#        base._decl_props[:x].should == {:conf1 => 'val1'}
-#      end
-#    end
-#
-#  end
-#
-#  context "for a subclass" do
-#
-#    before do
-#      base.property :baaz
-#      base.property :y, :conf1 => 'val2'
-#    end
-#
-#    it "exist in the base class" do
-#      base.property?(:baaz).should be_true
-#    end
-#
-#    it "should inherit the properties" do
-#      sub.property?(:baaz).should be_true
-#    end
-#
-#    it "does not change the base class properties" do
-#      sub.property :subp
-#      base.property?(:subp).should be_false
-#      sub.property?(:subp).should be_true
-#    end
-#
-#    it "inherits configuration properties as well" do
-#      base._decl_props[:y].should == {:conf1 => 'val2'}
-#      sub._decl_props[:y].should == {:conf1 => 'val2'}
-#    end
-#  end
-#end
 
 end

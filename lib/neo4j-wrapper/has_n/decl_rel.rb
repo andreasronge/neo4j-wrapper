@@ -36,12 +36,23 @@ module Neo4j
         attr_reader :target_class, :source_class, :dir, :rel_type
 
         def initialize(method_id, has_one, target_class)
-          @dir = :outgoing
           @method_id = method_id
           @has_one = has_one
-          @rel_type = method_id
           @target_class = target_class
+          @dir = :outgoing
+          @rel_type = method_id
           @source_class = target_class
+        end
+
+        def inherit_new
+          base = self
+          dr = DeclRel.new(@method_id, @has_one, @target_class)
+          dr.instance_eval do
+            @dir = base.dir
+            @rel_type = base.rel_type
+            @source_class = base.source_class
+          end
+          dr
         end
 
         def to_s

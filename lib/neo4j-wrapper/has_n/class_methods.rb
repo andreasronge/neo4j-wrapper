@@ -10,7 +10,9 @@ module Neo4j
 
         # make sure the inherited classes inherit the <tt>_decl_rels</tt> hash
         def inherited(klass)
-          klass.instance_variable_set(:@_decl_rels, _decl_rels.clone)
+          copy = _decl_rels.clone
+          copy.each_pair{|k,v| copy[k] = v.inherit_new}
+          klass.instance_variable_set(:@_decl_rels, copy)
           super
         end
 
@@ -19,7 +21,7 @@ module Neo4j
         # Generates assignment and accessor methods for the given relationship.
         # Both incoming and outgoing relationships can be declared, see {Neo4j::Wrapper::HasN::DeclRel}
         #
-        # @example
+        # @example has_n(:files)
         #
         #   class FolderNode
         #      include Ne4j::NodeMixin
