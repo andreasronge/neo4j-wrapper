@@ -4,10 +4,12 @@ module Neo4j
 
       module ClassMethods
 
+        # @return [Hash] a hash of all properties and its configuration defined by property class method
         def _decl_props
           @_decl_props ||= {}
         end
 
+        # make sure the inherited classes inherit the <tt>_decl_props</tt> hash
         def inherited(klass)
           klass.instance_variable_set(:@_decl_props, _decl_props.clone)
           super

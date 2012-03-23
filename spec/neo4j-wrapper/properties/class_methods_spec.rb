@@ -24,12 +24,24 @@ describe Neo4j::Wrapper::Property::ClassMethods do
         base.property?(:foo).should be_true
       end
     end
+
+    describe "#property :x, :conf1 => 'val1'" do
+      before do
+        base.property :x, :conf1 => 'val1'
+      end
+
+      it "should have configuration for property :x" do
+        base._decl_props[:x].should == {:conf1 => 'val1'}
+      end
+    end
+
   end
 
   context "for a subclass" do
 
     before do
       base.property :baaz
+      base.property :y, :conf1 => 'val2'
     end
 
     it "exist in the base class" do
@@ -44,6 +56,11 @@ describe Neo4j::Wrapper::Property::ClassMethods do
       sub.property :subp
       base.property?(:subp).should be_false
       sub.property?(:subp).should be_true
+    end
+
+    it "inherits configuration properties as well" do
+      base._decl_props[:y].should == {:conf1 => 'val2'}
+      sub._decl_props[:y].should == {:conf1 => 'val2'}
     end
   end
 end
