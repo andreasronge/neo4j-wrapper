@@ -4,6 +4,54 @@ This contains the Ruby wrapper of the Neo4j::Node and Neo4j::Relationship java o
 The neo4j.rb gem will be split up into several gems, neo4j-core, neo4j-wrapper and neo4j-rails (?)
 This gem will be included by neo4j 2.0.0 gem.
 
+== Docs
+
+* {YARD}[http://rdoc.info/github/andreasronge/neo4j-wrapper/file/README.rdoc]
+
+== The public API
+
+{Neo4j::NodeMixin} The Java Neo4j Node
+
+{Neo4j::RelationshipMixin} The Java Relationship
+
+{Neo4j::IdentityMap} The Identity Map
+
+=== Example
+
+    class Company
+      include Neo4j::NodeMixin
+      has_n(:employees)
+    end
+
+    class Person
+      include Neo4j::NodeMixin
+      property :name
+      property :age, :size, :type => Fixnum, :index => :exact
+      property :description, :index => :fulltext
+
+      has_one(:best_friend)
+      has_n(:employed_by).from(:employees)
+    end
+
+    Neo4j::Transaction.run do
+      Person.new(:name => 'jimmy', :age => 35)
+    end
+
+    person = Person.find(:age => (10..42)).first
+
+    Neo4j::Transaction.run do
+      person.best_friend = Person.new
+      person.employed_by << Company.new(:name => "Foo ab")
+    end
+
+    # find by navigate incoming relationship
+    company = person.employed_by.find { |p| p[:name] == 'Foo ab' }
+    puts "Person #{person.name} employed by #{company[:name]}"
+    # navigate the outgoing relationship:
+    company.employees.each {|x| puts x.name}
+
+== Changes
+
 Changes from the neo4j.rb
 * Use of YARD instead of RDoc
 * Some tidy up of the API and code
@@ -13,12 +61,4 @@ Changes from the neo4j.rb
 
 This gem contains two modules: Neo4j and Neo4j::Wrapper
 The Neo4j module is public and the Neo4j::Wrapper(::*) are private modules.
-
-== The public API
-
-{Neo4j::NodeMixin} The Java Neo4j Node
-
-{Neo4j::RelationshipMixin} The Java Relationship
-
-{Neo4j::IdentityMap} The Identity Map
 
