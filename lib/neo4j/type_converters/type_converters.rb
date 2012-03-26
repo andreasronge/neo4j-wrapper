@@ -1,15 +1,13 @@
 module Neo4j
 
   # Responsible for converting values from and to Java Neo4j and Lucene.
-  # You can implement your own converter by implementing the method <tt>convert?</tt>
+  # You can implement your own converter by implementing the method <tt>convert?</tt>, <tt>index_as</tt>
   # <tt>to_java</tt> and <tt>to_ruby</tt> in this module.
   #
   # There are currently three default converters that are triggered when a Time, Date or a DateTime is read or written
   # if there is a type declared for the property.
   #
-  # ==== Example
-  #
-  # Example of writing your own marshalling converter:
+  # @example  writing your own marshalling converter:
   #
   #  class Foo
   #     include Neo4j::NodeMixin
@@ -29,6 +27,10 @@ module Neo4j
   #
   #        def to_ruby(val)
   #          val.sub(/silly:/, '')
+  #        end
+  #
+  #        def index_as
+  #          String
   #        end
   #      end
   #    end

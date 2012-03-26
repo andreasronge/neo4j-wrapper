@@ -6,14 +6,12 @@ module Neo4j
   #
   #   class Contact
   #      include Neo4j::NodeMixin
-  #      index :phone
-  #      property :phone
+  #      property :phone, :index => :exact
   #   end
   #
   #   # Find an contact with a phone number
   #   Contact.find('phone: 12345').first #=> a phone object !
   #
-  # {render:Neo4j::Wrapper::NodeMixin::ClassMethods#new}
   #
   # = Class Method Modules
   # * {Neo4j::Wrapper::ClassMethods}
