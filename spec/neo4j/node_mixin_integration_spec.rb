@@ -1,5 +1,4 @@
-require File.join(File.dirname(__FILE__), '..', 'spec_helper')
-
+require 'spec_helper'
 
 describe Neo4j::NodeMixin, :type => :integration do
 
