@@ -6,7 +6,7 @@ describe "Neo4j::NodeMixin index", :type => :integration do
 
   context "class Foo123::Bar - index :foo" do
     subject do
-      klass.index :foo
+      klass.property :foo, :index => :exact
       klass
     end
 

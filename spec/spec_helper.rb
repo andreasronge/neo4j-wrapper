@@ -90,8 +90,8 @@ module TempModel
         def self.to_s
           "#{name}"
         end
-        include Neo4j::NodeMixin
     RUBY
+    klass.send(:include,  Neo4j::NodeMixin) unless klass.kind_of?(Neo4j::NodeMixin)
     Kernel.const_set(name, klass)
     klass
   end

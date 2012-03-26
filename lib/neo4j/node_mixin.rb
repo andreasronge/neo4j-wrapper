@@ -47,6 +47,7 @@ module Neo4j
       end
 
       def klass.inherited(sub_klass)
+        return super if sub_klass.to_s == self.to_s
         index_name = sub_klass.to_s.gsub("::", '_')
         base_class = self
 

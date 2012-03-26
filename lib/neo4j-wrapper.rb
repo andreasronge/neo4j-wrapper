@@ -14,5 +14,6 @@ require 'neo4j-wrapper/has_n/decl_rel'
 require 'neo4j-wrapper/has_n/nodes'
 require 'neo4j-wrapper/has_n/instance_methods'
 
+require 'neo4j/type_converters/type_converters'
 require 'neo4j/node_mixin'
 require 'neo4j/identity_map'
