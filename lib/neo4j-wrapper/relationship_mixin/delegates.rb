@@ -7,10 +7,11 @@ module Neo4j
           private
           # @macro  [new] node.delegate
           #   @method $1(*args, &block)
-          #   Delegates the `$1` message to <tt>_java_entity</tt> instance with the supplied parameters.
-          #   @see Neo4j::NodeMixin#_java_entity
-          #   @see http://rdoc.info/github/andreasronge/neo4j-core/master/Neo4j/Relationship#$1-instance_method Neo4j::Core::Relationship#$1
-          def delegate(method_name)
+          #   Delegates to {http://rdoc.info/github/andreasronge/neo4j-core/master/Neo4j/Core/$2#$1-instance_method Neo4j::Core::Relationship#$1} using the <tt>_java_entity</tt> instance with the supplied parameters.
+          #   @see Neo4j::Relationship#_java_entity
+          #   @see http://rdoc.info/github/andreasronge/neo4j-core/master/Neo4j/Core/$2#$1-instance_method Neo4j::Relationship#$1
+          def delegate(*args)
+            method_name = args.first
             class_eval(<<-EOM, __FILE__, __LINE__)
               def #{method_name}(*args, &block)
                 _java_entity.send(:#{method_name}, *args, &block)
@@ -19,77 +20,88 @@ module Neo4j
           end
         end
 
-        # @macro  node.delegate
-        delegate :[]=
+
+        # Methods included from Core::Property
+        # [], #[]=, #neo_id, #property?, #props, #update
 
         # @macro  node.delegate
-        delegate :[]
+        delegate :[]=, 'Property'
 
         # @macro  node.delegate
-        delegate :property?
+        delegate :[], 'Property'
 
         # @macro  node.delegate
-        delegate :props
+        delegate :property?, 'Property'
 
         # @macro  node.delegate
-        delegate :update
+        delegate :props, 'Property'
 
         # @macro  node.delegate
-        delegate :neo_id
+        delegate :update, 'Property'
 
         # @macro  node.delegate
-        delegate :rels
+        delegate :neo_id, 'Property'
+
+        # Methods included from Core::Relationship
 
         # @macro  node.delegate
-        delegate :rel?
+        delegate :_end_node, 'Relationship'
 
         # @macro  node.delegate
-        delegate :node
+        delegate :end_node, 'Relationship'
+
 
         # @macro  node.delegate
-        delegate :rel
+        delegate :_start_node, 'Relationship'
 
         # @macro  node.delegate
-        delegate :del
+        delegate :end_node, 'Relationship'
 
         # @macro  node.delegate
-        delegate :outgoing
+        delegate :other_node, 'Relationship'
 
         # @macro  node.delegate
-        delegate :incoming
+        delegate :_other_node, 'Relationship'
 
         # @macro  node.delegate
-        delegate :both
+        delegate :del, 'Relationship'
 
         # @macro  node.delegate
-        delegate :expand
+        delegate :exist?, 'Relationship'
 
         # @macro  node.delegate
-        delegate :get_property
+        delegate :rel_type, 'Relationship'
+
+        # Methods included from Core::Property::Java
+        #get_property, #graph_database, #property_keys, #remove_property, #set_property
 
         # @macro  node.delegate
-        delegate :set_property
+        delegate :get_property, 'Property/Java'
 
         # @macro  node.delegate
-        delegate :equal?
+        delegate :set_property, 'Property/Java'
 
         # @macro  node.delegate
-        delegate :eql?
+        delegate :property_keys, 'Property/Java'
+
+        # @macro  node.delegate
+        delegate :remove_property, 'Property/Java'
+
+        # Methods included from Core::Equal
+        #==, #eql?, #equal?
+
+        # @macro  node.delegate
+        delegate :equal?, 'Equal'
+
+        # @macro  node.delegate
+        delegate :eql?, 'Equal'
+
 
         # @macro  node.delegate
         delegate :==
 
         # @macro  node.delegate
-        delegate :exist?
-
-        # @macro  node.delegate
-        delegate :rel
-
-        # @macro  node.delegate
-        delegate :_node
-
-        # @macro  node.delegate
-        delegate :_rels
+        delegate :getId
       end
 
     end

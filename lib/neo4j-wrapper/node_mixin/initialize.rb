@@ -22,6 +22,7 @@ module Neo4j
         end
 
         # @return [Neo4j::Node] Returns the org.neo4j.graphdb.Node wrapped object
+        # @see http://rdoc.info/github/andreasronge/neo4j-core/master/Neo4j/Node
         def _java_node
           @_java_node
         end

@@ -12,7 +12,20 @@ module Neo4j
   #
   #  Friend.new(:knows, node_a, node_b, :strength => 3.14)
   #  Friend.find(:strength => (2..5)).first
+  #
+  # = Class Method Modules
+  # * {Neo4j::Wrapper::RelationshipMixin::ClassMethods}
+  # * {Neo4j::Wrapper::Property::ClassMethods}
   module RelationshipMixin
+
+    include Neo4j::Wrapper::RelationshipMixin::Initialize
+    include Neo4j::Wrapper::RelationshipMixin::Delegates
+
+    # @private
+    def self.included(klass)
+      klass.extend Neo4j::Wrapper::RelationshipMixin::ClassMethods
+      klass.extend Neo4j::Wrapper::Property::ClassMethods
+    end
 
   end
 end

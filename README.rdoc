@@ -16,7 +16,7 @@ This gem will be included by neo4j 2.0.0 gem.
 
 {Neo4j::IdentityMap} The Identity Map
 
-=== Example
+== Example
 
     class Company
       include Neo4j::NodeMixin
