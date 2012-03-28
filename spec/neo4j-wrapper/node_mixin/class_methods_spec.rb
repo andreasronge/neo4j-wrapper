@@ -10,7 +10,7 @@ describe Neo4j::Wrapper::NodeMixin::ClassMethods do
   end
 
   describe "#new" do
-    it "Do things" do
+    it "creates a new node" do
       node = mock("Node")
       Neo4j::Node.stub(:create).and_return(node)
       subject.any_instance.should_receive(:init_on_load).with(node)

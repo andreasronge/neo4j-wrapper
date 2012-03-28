@@ -14,9 +14,9 @@ module Neo4j
         #
         # @param (see Neo4j::Wrapper::RelationshipMixin::ClassMethods#new)
         def init_on_create(rel_type, from_node, to_node, *props) # :nodoc:
-          self[:_classname] = self.class.to_s
-          if props.respond_to?(:each_pair)
-            props.each_pair { |k, v| respond_to?("#{k}=") ? self.send("#{k}=", v) : @_java_rel[k] = v }
+          _java_entity[:_classname] = self.class.to_s
+          if props.first.respond_to?(:each_pair)
+            props.first.each_pair { |k, v| respond_to?("#{k}=") ? self.send("#{k}=", v) : @_java_rel[k] = v }
           end
         end
 
