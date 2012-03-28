@@ -83,7 +83,15 @@ end
 module TempModel
   @@_counter = 1
 
-  def self.set(klass)
+  def new(base_class, mixin, &block)
+    klass = Class.new(base_class)
+    setup(klass, mixin)
+    base_class.inherited(klass) if base_class.respond_to?(:inherited)
+    klass.class_eval(&block) if block
+    klass
+  end
+
+  def setup(klass, mixin)
     name = "TestClass_#{@@_counter}"
     @@_counter += 1
     klass.class_eval <<-RUBY
@@ -91,16 +99,18 @@ module TempModel
           "#{name}"
         end
     RUBY
-    klass.send(:include,  Neo4j::NodeMixin) unless klass.kind_of?(Neo4j::NodeMixin)
+    klass.send(:include,  mixin) unless klass.kind_of?(mixin)
     Kernel.const_set(name, klass)
     klass
   end
+
+  extend self
 end
 
 def new_node_mixin_class(base_class = Object, &block)
-  klass = Class.new(base_class)
-  TempModel.set(klass)
-  base_class.inherited(klass) if base_class.respond_to?(:inherited)
-  klass.class_eval(&block) if block
-  klass
+  TempModel.new(base_class, Neo4j::NodeMixin, &block)
+end
+
+def new_relationship_mixin_class(base_class = Object, &block)
+  TempModel.new(base_class, Neo4j::RelationshipMixin, &block)
 end

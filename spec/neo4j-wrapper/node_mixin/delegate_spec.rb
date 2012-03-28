@@ -9,7 +9,19 @@ describe Neo4j::Wrapper::NodeMixin::Delegates do
     klass.new
   end
 
-  it "delegates calls to the _java_entity" do
+  let(:java_node) { @java_node }
+  before(:all) do
+    @java_node = Neo4j::Transaction.run { Neo4j::Node.new }
+  end
+
+  describe "Neo4j::Node" do
+    subject { java_node }
+    Neo4j::Wrapper::NodeMixin::Delegates.instance_methods.each do |meth|
+      it { should respond_to(meth) }
+    end
+  end
+
+  it "s calls to the _java_entity" do
     subject.stub(:_java_entity) { Struct.new(:props).new({:name => 'foo'}) }
     subject.props.should == {:name => 'foo'}
   end
