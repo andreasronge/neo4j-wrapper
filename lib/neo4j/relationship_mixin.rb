@@ -16,6 +16,7 @@ module Neo4j
   # = Class Method Modules
   # * {Neo4j::Wrapper::RelationshipMixin::ClassMethods}
   # * {Neo4j::Wrapper::Property::ClassMethods}
+  # * {Neo4j::Core::Index::ClassMethods}
   module RelationshipMixin
 
     include Neo4j::Wrapper::RelationshipMixin::Initialize
@@ -23,8 +24,36 @@ module Neo4j
 
     # @private
     def self.included(klass)
+      klass.extend Neo4j::Wrapper::ClassMethods
       klass.extend Neo4j::Wrapper::RelationshipMixin::ClassMethods
       klass.extend Neo4j::Wrapper::Property::ClassMethods
+      klass.extend Neo4j::Core::Index::ClassMethods
+
+      index_name = klass.to_s.gsub("::", '_')
+
+      klass.rel_indexer do
+        index_names :exact => "#{index_name}_exact", :fulltext => "#{index_name}_fulltext"
+        trigger_on :_classname => klass.to_s
+      end
+
+      def klass.inherited(sub_klass)
+        return super if sub_klass.to_s == self.to_s
+        index_name = sub_klass.to_s.gsub("::", '_')
+        base_class = self
+
+        # make the base class trigger on the sub class nodes
+        base_class._indexer.config.trigger_on :_classname => sub_klass.to_s
+
+        sub_klass.rel_indexer do
+          inherit_from base_class
+          index_names :exact => "#{index_name}_exact", :fulltext => "#{index_name}_fulltext"
+          trigger_on :_classname => sub_klass.to_s
+        end
+        super
+      end
+
+      super
+
     end
 
   end
