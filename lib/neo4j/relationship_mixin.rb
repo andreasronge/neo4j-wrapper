@@ -17,6 +17,7 @@ module Neo4j
   # * {Neo4j::Wrapper::RelationshipMixin::ClassMethods}
   # * {Neo4j::Wrapper::Property::ClassMethods}
   # * {Neo4j::Core::Index::ClassMethods}
+  # * {Neo4j::Wrapper::Find}
   module RelationshipMixin
 
     include Neo4j::Wrapper::RelationshipMixin::Initialize
@@ -28,6 +29,7 @@ module Neo4j
       klass.extend Neo4j::Wrapper::RelationshipMixin::ClassMethods
       klass.extend Neo4j::Wrapper::Property::ClassMethods
       klass.extend Neo4j::Core::Index::ClassMethods
+      klass.extend Neo4j::Wrapper::Find
 
       index_name = klass.to_s.gsub("::", '_')
 

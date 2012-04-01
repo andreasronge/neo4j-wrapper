@@ -17,6 +17,7 @@ require 'neo4j-wrapper/has_n/instance_methods'
 require 'neo4j-wrapper/relationship_mixin/class_methods'
 require 'neo4j-wrapper/relationship_mixin/initialize'
 require 'neo4j-wrapper/relationship_mixin/delegates'
+require 'neo4j-wrapper/find'
 
 require 'neo4j/type_converters/type_converters'
 require 'neo4j/node_mixin'

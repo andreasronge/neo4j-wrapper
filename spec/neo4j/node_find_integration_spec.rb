@@ -79,7 +79,6 @@ describe Neo4j::NodeMixin, "find", :type => :integration do
     end
 
     it "should index all values in the array" do
-      pending "INDEX ON ARRAY NOT IMPL YET"
       node = klass.new :items => %w[hej hopp oj]
       new_tx
       result = klass.find('items: hej')
@@ -131,10 +130,6 @@ describe Neo4j::NodeMixin, "find", :type => :integration do
 
     it "find(:name => 'bike', :wheels => 2)" do
       vehicle_class.find(:name => 'bike', :wheels => 2).to_a.should =~ [@bike]
-    end
-
-    it "find(:conditions => {:name => 'bike', :wheels => 2})" do
-      vehicle_class.find(:conditions => {:name => 'bike', :wheels => 2}).to_a.should =~ [@bike]
     end
 
     it "find({}) should return nothing" do

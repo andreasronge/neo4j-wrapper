@@ -18,6 +18,7 @@ module Neo4j
   # * {Neo4j::Wrapper::NodeMixin::ClassMethods}
   # * {Neo4j::Wrapper::Property::ClassMethods}
   # * {Neo4j::Wrapper::HasN::ClassMethods}
+  # * {Neo4j::Wrapper::Find}
   # * {http://rdoc.info/github/andreasronge/neo4j-core/master/Neo4j/Core/Index/ClassMethods Neo4j::Core::Index::ClassMethods}
   #
   # = Instance Method Modules
@@ -36,6 +37,8 @@ module Neo4j
       klass.extend Neo4j::Wrapper::Property::ClassMethods
       klass.extend Neo4j::Wrapper::HasN::ClassMethods
       klass.extend Neo4j::Core::Index::ClassMethods
+      klass.extend Neo4j::Wrapper::Find
+
 
       index_name = klass.to_s.gsub("::", '_')
 

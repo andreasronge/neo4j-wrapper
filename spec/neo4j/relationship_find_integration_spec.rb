@@ -47,7 +47,6 @@ describe Neo4j::NodeMixin, "find", :type => :integration do
   end
 
   it "can find using a Date" do
-    pending
     today = Time.now
     k1 = friends_class.new(:friends, from_node, to_node, :since => today)
     finish_tx
