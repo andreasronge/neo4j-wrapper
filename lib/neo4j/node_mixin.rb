@@ -40,16 +40,14 @@ module Neo4j
       klass.extend Neo4j::Wrapper::Find
 
 
-      index_name = klass.to_s.gsub("::", '_')
-
       klass.node_indexer do
-        index_names :exact => "#{index_name}_exact", :fulltext => "#{index_name}_fulltext"
+        index_names :exact => "#{klass._index_name}_exact", :fulltext => "#{klass._index_name}_fulltext"
         trigger_on :_classname => klass.to_s
+        prefix_index_name &klass.method(:_index_prefix)
       end
 
       def klass.inherited(sub_klass)
         return super if sub_klass.to_s == self.to_s
-        index_name = sub_klass.to_s.gsub("::", '_')
         base_class = self
 
         # make the base class trigger on the sub class nodes
@@ -57,8 +55,9 @@ module Neo4j
 
         sub_klass.node_indexer do
           inherit_from base_class
-          index_names :exact => "#{index_name}_exact", :fulltext => "#{index_name}_fulltext"
+          index_names :exact => "#{sub_klass._index_name}_exact", :fulltext => "#{sub_klass._index_name}_fulltext"
           trigger_on :_classname => sub_klass.to_s
+          prefix_index_name &sub_klass.method(:_index_prefix)
         end
         super
       end

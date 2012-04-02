@@ -95,8 +95,6 @@ describe Neo4j::NodeMixin, "find", :type => :integration do
     end
 
     it "when an item in the array is removed it should not be found" do
-      pending "INDEX ON ARRAY NOT IMPL YET"
-
       node = klass.new :items => %w[hej hopp oj]
       new_tx
       #node.items.delete('hopp') # does not work
