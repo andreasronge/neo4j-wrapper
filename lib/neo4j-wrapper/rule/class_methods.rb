@@ -71,7 +71,7 @@ module Neo4j
       #
       # === Thread Safe ?
       # Yes, since operations are performed in an transaction. However you may get a deadlock exception:
-      # http://docs.neo4j.org/html/snapshot/#_deadlocks
+      # @see http://docs.neo4j.org/chunked/stable/transactions-deadlocks.html Transaction Deadlock
       #
       module ClassMethods
 

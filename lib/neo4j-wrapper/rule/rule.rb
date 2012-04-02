@@ -97,12 +97,6 @@ module Neo4j
             end
           end
 
-          def delete(clazz)
-            if rule_node = rule_node_for(clazz)
-              rule_node.delete_node
-            end
-          end
-
           def trigger?(node)
             classname = node[:_classname]
             @rule_nodes && classname && rule_node_for(classname) && !rule_node_for(classname).bulk_update?

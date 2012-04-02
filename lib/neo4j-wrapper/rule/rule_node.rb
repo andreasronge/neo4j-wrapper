@@ -15,20 +15,14 @@ module Neo4j
 
         def initialize(clazz)
           classname = clazz.to_s
-          @model_class = classname[0, 1] == "#" ? eval(classname) : classname.split('::').inject(Kernel) { |sc, const_name| sc.const_get(const_name) }
+          @model_class = Neo4j::Wrapper.to_class(classname)
           @classname = clazz
           @rules = []
-          @rule_node_key = ("rule_" + clazz.to_s).to_sym
           @ref_node_key = ("rule_ref_for_" + clazz.to_s).to_sym
         end
 
         def to_s
-          "RuleNode #{@classname}, node #{rule_node} #rules: #{@rules.size}"
-        end
-
-        # returns true if the rule node exist yet in the database
-        def node_exist?
-          !ref_node.rel?(@classname)
+          "RuleNode #{@classname}, @@rule_nodes #{@@rule_nodes.size} #rules: #{@rules.size}"
         end
 
         def rule_node
@@ -42,7 +36,7 @@ module Neo4j
         end
 
         def key
-          "#{ref_node}#{@ref_node_key}".to_sym
+          "#{ref_node.neo_id}#{@ref_node_key}".to_sym
         end
 
         def ref_node
@@ -67,15 +61,8 @@ module Neo4j
           end
         end
 
-        def delete_node
-          if ref_node.rel?(@classname)
-            ref_node.outgoing(@classname).each { |n| n.del }
-          end
-          clear_rule_node
-        end
-
         def find_node
-          ref_node.rel?(:outgoing, @classname.to_s) && ref_node._rel(:outgoing, @classname.to_s)._end_node
+          ref_node.rel?(:outgoing, @classname.to_s) && ref_node._node(:outgoing, @classname.to_s)
         end
 
         def ref_node_changed?
@@ -111,7 +98,6 @@ module Neo4j
         # Return a traversal object with methods for each rule and function.
         # E.g. Person.all.old or Person.all.sum(:age)
         def traversal(rule_name)
-          # define method on the traversal
           traversal = rule_node.outgoing(rule_name)
           @rules.each do |rule|
             traversal.filter_method(rule.rule_name) do |path|
@@ -186,11 +172,11 @@ module Neo4j
         # uses the end_node to start with because it's more likely to have less relationships to go through
         # (just the number of superclasses it has really)
         def connected?(rule_name, end_node)
-          end_node.incoming(rule_name).find { |n| n == rule_node }
+          end_node.nodes(:incoming, rule_name).find { |n| n == rule_node }
         end
 
         def connect(rule_name, end_node)
-          rule_node._java_node.createRelationshipTo(end_node._java_node, org.neo4j.graphdb.DynamicRelationshipType.withName(rule_name))
+          rule_node._java_node.create_relationship_to(end_node._java_node, type_to_java(rule_name))
         end
 
         # sever a direct one-to-one relationship if it exists
