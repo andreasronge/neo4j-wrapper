@@ -21,7 +21,7 @@ module Neo4j
         end
 
         # @returns [Neo4j::Relationship] the wrapped relationship object
-        # @see http://rdoc.info/github/andreasronge/neo4j-core/master/Neo4j/Relationship
+        # @see http://rdoc.info/github/andreasronge/neo4j-core/master/Neo4j/Relationship Neo4j::Relationship
         def _java_rel
           @_java_rel
         end

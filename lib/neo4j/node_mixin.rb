@@ -43,7 +43,7 @@ module Neo4j
       klass.node_indexer do
         index_names :exact => "#{klass._index_name}_exact", :fulltext => "#{klass._index_name}_fulltext"
         trigger_on :_classname => klass.to_s
-        prefix_index_name &klass.method(:_index_prefix)
+        prefix_index_name &klass.method(:index_prefix)
       end
 
       def klass.inherited(sub_klass)
@@ -57,22 +57,12 @@ module Neo4j
           inherit_from base_class
           index_names :exact => "#{sub_klass._index_name}_exact", :fulltext => "#{sub_klass._index_name}_fulltext"
           trigger_on :_classname => sub_klass.to_s
-          prefix_index_name &sub_klass.method(:_index_prefix)
+          prefix_index_name &sub_klass.method(:index_prefix)
         end
         super
       end
       super
     end
-
-    # TODO
-    #def self._index_prefix
-    #  return "" unless Neo4j.running?
-    #  return "" unless respond_to?(:ref_node_for_class)
-    #  ref_node = ref_node_for_class.wrapper
-    #  prefix = ref_node.send(:_index_prefix) if ref_node.respond_to?(:_index_prefix)
-    #  prefix ||= ref_node[:name] # To maintain backward compatiblity
-    #  prefix.blank? ? "" : prefix + "_"
-    #end
 
   end
 end

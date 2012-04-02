@@ -6,11 +6,11 @@ module Neo4j
       # If the #ref_node_for_class returns an object implementing the method #_index_prefix it
       # will use that as prefix, otherwise the empty string.
       # @return [String] the prefix name of the index
-      def _index_prefix
+      def index_prefix
         return "" unless Neo4j.running?
         return "" unless respond_to?(:ref_node_for_class)
         ref_node = ref_node_for_class.wrapper
-        prefix = ref_node.send(:_index_prefix) if ref_node.respond_to?(:_index_prefix)
+        prefix = ref_node.send(:index_prefix) if ref_node.respond_to?(:index_prefix)
         prefix ? prefix + "_" : ""
       end
 

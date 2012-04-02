@@ -17,7 +17,7 @@ describe Neo4j::Wrapper::Find do
       node_indexer do
         index_names :exact => "#{klass._index_name}_exact", :fulltext => "#{klass._index_name}_fulltext"
         trigger_on :_classname => klass.to_s
-        prefix_index_name &klass.method(:_index_prefix)
+        prefix_index_name &klass.method(:index_prefix)
       end
     end
 
@@ -37,7 +37,7 @@ describe Neo4j::Wrapper::Find do
     it "should have a prefix if not using default ref node" do
       Neo4j.stub(:running?) { true }
       my_ref_node = MockNode.new
-      my_ref_node.stub(:_index_prefix) { "Prefix" }
+      my_ref_node.stub(:index_prefix) { "Prefix" }
       Neo4j.stub(:ref_node) { my_ref_node }
       wrapper_class.index_name_for_type(:exact).should == "Prefix_Foo_Bar_exact"
     end
