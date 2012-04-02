@@ -1,9 +1,8 @@
 require 'spec_helper'
 
 describe Neo4j::Wrapper::Rule::Functions::Count, :type => :integration do
-  before(:each) { new_tx}
-  after(:each) { finish_tx}
-
+  before(:each) { new_tx }
+  after(:each) { finish_tx }
 
   context "rule :all, :functions => Count.new" do
     let(:klass) do
@@ -22,15 +21,39 @@ describe Neo4j::Wrapper::Rule::Functions::Count, :type => :integration do
     #end
 
     context "for a subclass" do
-      before(:all) do
+      class CountBaseClass
+        include Neo4j::NodeMixin
+        rule(:all, :functions => Count.new)
+      end
 
-        class CountBaseClass
-          include Neo4j::NodeMixin
-          rule(:all, :functions => Count.new)
-        end
+      class CountSubClass < CountBaseClass
+      end
 
-        class CountSubClass < CountBaseClass
-        end
+      after(:each) do
+        new_tx
+        CountSubClass.all.each { |n| n.del }
+        CountBaseClass.all.each { |n| n.del }
+        new_tx
+      end
+
+      it "should update the counter when deleted" do
+        CountBaseClass.count(:all).should == 0
+        node = CountBaseClass.new
+        new_tx
+        CountBaseClass.count(:all).should == 1
+        node.del
+        new_tx
+        CountBaseClass.count(:all).should == 0
+      end
+
+      it "should update the counter when deleted for subclass" do
+        CountSubClass.count(:all).should == 0
+        node = CountSubClass.new
+        new_tx
+        CountSubClass.count(:all).should == 1
+        node.del
+        new_tx
+        CountSubClass.count(:all).should == 0
       end
 
       it "should update counter for only subclass when a new subclass is created" do
@@ -43,11 +66,10 @@ describe Neo4j::Wrapper::Rule::Functions::Count, :type => :integration do
         new_tx
         CountBaseClass.count(:all).should == 2
         CountSubClass.count(:all).should == 1
-
+        CountSubClass.all.count.should == 1
       end
 
       it "should update counter for both baseclass and subclass" do
-        pending "not sure if subclass rule works"
         CountBaseClass.new
         new_tx
         CountSubClass.count(:all).should == 0
@@ -195,8 +217,8 @@ end
 
 describe Neo4j::Wrapper::Rule::Functions::Sum, :type => :integration do
 
-  before(:each) { new_tx}
-  after(:each) { finish_tx}
+  before(:each) { new_tx }
+  after(:each) { finish_tx }
 
   context "rule :all, :functions => Sum.new(:age)" do
     let(:klass) do
