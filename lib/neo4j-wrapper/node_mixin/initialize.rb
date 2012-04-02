@@ -27,6 +27,13 @@ module Neo4j
           @_java_node
         end
 
+        # Implements the Neo4j::Node#wrapper and Neo4j::Relationship#wrapper method
+        # so that we don't have to care if the node is wrapped or not.
+        # @return self
+        def wrapper
+          self
+        end
+
         alias_method :_java_entity, :_java_node
 
       end

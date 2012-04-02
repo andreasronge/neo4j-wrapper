@@ -19,6 +19,7 @@ module Neo4j
   # * {Neo4j::Wrapper::Property::ClassMethods}
   # * {Neo4j::Wrapper::HasN::ClassMethods}
   # * {Neo4j::Wrapper::Find}
+  # * {Neo4j::Wrapper::Rule::ClassMethods}
   # * {http://rdoc.info/github/andreasronge/neo4j-core/master/Neo4j/Core/Index/ClassMethods Neo4j::Core::Index::ClassMethods}
   #
   # = Instance Method Modules
@@ -27,8 +28,8 @@ module Neo4j
     include Neo4j::Wrapper::NodeMixin::Delegates
     include Neo4j::Wrapper::NodeMixin::Initialize
     include Neo4j::Wrapper::HasN::InstanceMethods
+    include Neo4j::Wrapper::Rule::InstanceMethods
     include Neo4j::Core::Index
-
 
     # @private
     def self.included(klass)
@@ -38,6 +39,9 @@ module Neo4j
       klass.extend Neo4j::Wrapper::HasN::ClassMethods
       klass.extend Neo4j::Core::Index::ClassMethods
       klass.extend Neo4j::Wrapper::Find
+      klass.extend Neo4j::Wrapper::Rule::ClassMethods
+
+      klass.send(:include, Neo4j::Wrapper::Rule::Functions)
 
 
       klass.node_indexer do
@@ -52,6 +56,8 @@ module Neo4j
 
         # make the base class trigger on the sub class nodes
         base_class._indexer.config.trigger_on :_classname => sub_klass.to_s
+
+        sub_klass.inherit_rules_from self
 
         sub_klass.node_indexer do
           inherit_from base_class
