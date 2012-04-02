@@ -45,8 +45,8 @@ describe Neo4j::Wrapper::Rule::RuleNode do
   end
 
   describe "key" do
-    it "is " do
-      subject.key.should == :"1rule_ref_for_TestClass_2"
+    it "is a Symbol" do
+      subject.key.should be_a(Symbol)
     end
   end
 
