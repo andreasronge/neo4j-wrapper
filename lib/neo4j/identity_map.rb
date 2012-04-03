@@ -23,7 +23,7 @@ module Neo4j
       end
 
       def enabled
-         Thread.current[:neo4j_identity_map]
+         Thread.current[:neo4j_identity_map] == true
       end
 
       alias enabled? enabled
@@ -95,44 +95,13 @@ module Neo4j
       end
 
       def on_neo4j_started(db)
-        if not Neo4j::Config[:identity_map]
+        if !Neo4j::Config[:identity_map] && !enabled
           db.event_handler.remove(self)
         end
       end
 
     end
 
-
-    class Middleware
-      class Body #:nodoc:
-        def initialize(target, original)
-          @target = target
-          @original = original
-        end
-
-        def each(&block)
-          @target.each(&block)
-        end
-
-        def close
-          @target.close if @target.respond_to?(:close)
-        ensure
-          IdentityMap.enabled = @original
-          IdentityMap.clear
-        end
-      end
-
-      def initialize(app)
-        @app = app
-      end
-
-      def call(env)
-        enabled = IdentityMap.enabled
-        IdentityMap.enabled = Neo4j::Config[:identity_map]
-        status, headers, body = @app.call(env)
-        [status, headers, Body.new(body, enabled)]
-      end
-    end
   end
 end
 
