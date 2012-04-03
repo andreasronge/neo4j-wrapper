@@ -8,10 +8,8 @@ module Neo4j
           # ----------------------------------------------------------------------------------------------------------------
 
           def on_relationship_created(rel, *)
-            trigger_start_node = Rule.trigger?(rel._start_node)
-            trigger_end_node = Rule.trigger?(rel._end_node)
-            Rule.trigger_rules(rel._start_node) if trigger_start_node
-            Rule.trigger_rules(rel._end_node) if trigger_end_node
+            Rule.trigger_rules(rel._start_node) if Rule.trigger?(rel._start_node)
+            Rule.trigger_rules(rel._end_node) if Rule.trigger?(rel._end_node)
           end
 
           def on_property_changed(node, *changes)
@@ -29,7 +27,7 @@ module Neo4j
             rule_node = Rule.rule_node_for(clazz)
             return if rule_node.nil?
 
-            id = node.getId
+            id = node.neo_id
             rule_node.rules.each do |rule|
               next if rule.functions.nil? || rule.bulk_update?
               rule_name = rule.rule_name.to_s

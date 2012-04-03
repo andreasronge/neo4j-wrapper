@@ -72,10 +72,6 @@ module Neo4j
             rule
           end
 
-          def has_rules?(clazz)
-            !@rule_nodes[clazz.to_s].nil?
-          end
-
           def rule_names_for(clazz)
             rule_node = rule_node_for(clazz)
             rule_node.rules.map { |rule| rule.rule_name }

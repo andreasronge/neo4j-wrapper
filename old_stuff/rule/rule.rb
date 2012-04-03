@@ -19,7 +19,7 @@ module Neo4j
 
       def initialize(rule_name, props, &block)
         @rule_name = rule_name
-        @triggers  = props[:triggers]
+        @triggers = props[:triggers]
         @functions = props[:functions]
         @triggers = [@triggers] if @triggers && !@triggers.respond_to?(:each)
         @functions = [@functions] if @functions && !@functions.respond_to?(:each)
@@ -90,7 +90,9 @@ module Neo4j
 
         def rule_node_for(clazz)
           return nil if clazz.nil?
-          @rule_nodes[clazz.to_s] ||= RuleNode.new(clazz)
+          clazz.synchronized do
+            @rule_nodes[clazz.to_s] ||= RuleNode.new(clazz)
+          end
         end
 
         def find_rule_node(node)
@@ -122,25 +124,25 @@ module Neo4j
           rule_node.execute_rules(node, *changes)
 
           # recursively add relationships for all the parent classes with rules that also pass for this node
-          recursive(node,rule_node.model_class,*changes)
+          recursive(node, rule_node.model_class, *changes)
         end
 
-        def bulk_trigger_rules(classname,class_change, map)
+        def bulk_trigger_rules(classname, class_change, map)
           rule_node = rule_node_for(classname)
           rule_node.classes_changed(class_change)
           if (clazz = rule_node.model_class.superclass) && clazz.include?(Neo4j::NodeMixin)
-            bulk_trigger_rules(clazz.name,class_change,map) if clazz != Neo4j::Rails::Model
+            bulk_trigger_rules(clazz.name, class_change, map) if clazz != Neo4j::Rails::Model
           end
         end
 
         private
 
-        def recursive(node,model_class,*changes)
+        def recursive(node, model_class, *changes)
           if (clazz = model_class.superclass) && clazz.include?(Neo4j::NodeMixin)
             if clazz != Neo4j::Rails::Model
               rule_node = rule_node_for(clazz)
               rule_node && rule_node.execute_rules(node, *changes)
-              recursive(node,clazz,*changes)
+              recursive(node, clazz, *changes)
             end
           end
         end
