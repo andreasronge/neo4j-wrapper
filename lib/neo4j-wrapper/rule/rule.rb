@@ -62,6 +62,8 @@ module Neo4j
 
         @rule_nodes = {}
 
+        @lock = Java::java.lang.Object.new
+
         class << self
 
           def add(clazz, rule_name, props, &block)
@@ -79,7 +81,9 @@ module Neo4j
 
           def rule_node_for(clazz)
             return nil if clazz.nil?
-            @rule_nodes[clazz.to_s] ||= RuleNode.new(clazz)
+            @lock.synchronized do
+              @rule_nodes[clazz.to_s] ||= RuleNode.new(clazz)
+            end
           end
 
           def find_rule_node(node)

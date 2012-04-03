@@ -7,6 +7,7 @@ module Neo4j
         class Count < Function
           def initialize
             @property = '_classname'
+            @@lock ||= Java::java.lang.Object.new
           end
 
           def calculate?(changed_property)
@@ -31,8 +32,10 @@ module Neo4j
 
           def classes_changed(rule_name, rule_node, class_change)
             key = rule_node_property(rule_name)
-            rule_node[key] ||= 0
-            rule_node[key] += class_change.net_change
+            @@lock.synchronized do
+              rule_node[key] ||= 0
+              rule_node[key] += class_change.net_change
+            end
           end
 
           def self.function_name
