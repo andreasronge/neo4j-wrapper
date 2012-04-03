@@ -32,7 +32,7 @@ describe Neo4j::Wrapper::Rule::RuleNode do
 
   before do
     Neo4j.stub(:ref_node) { ref_node }
-    Neo4j::Transaction.stub(:run).and_yield("new tx")
+    Neo4j::Transaction.stub(:run).and_yield
   end
 
 
