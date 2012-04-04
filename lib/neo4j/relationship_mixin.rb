@@ -22,6 +22,7 @@ module Neo4j
 
     include Neo4j::Wrapper::RelationshipMixin::Initialize
     include Neo4j::Wrapper::RelationshipMixin::Delegates
+    include Neo4j::Wrapper::Property::InstanceMethods
 
     # @private
     def self.included(klass)

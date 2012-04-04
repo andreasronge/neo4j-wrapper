@@ -3,6 +3,36 @@ require 'spec_helper'
 
 describe Neo4j::Wrapper::Property do
 
+  describe "attributes" do
+    let(:klass) do
+      Class.new(Hash) do
+        include Neo4j::Wrapper::Property::InstanceMethods
+
+        def props
+          self
+        end
+
+        def name
+          "name #{self[:name]}"
+        end
+      end
+    end
+
+    subject { klass.new }
+
+    it "uses accessor method if available" do
+      subject[:foo] = 'bla'
+      subject[:name] = 'haha'
+      subject.attributes.should == {:foo=>"bla", :name=>"name haha"}
+    end
+
+    it "does not return properties with starting with _" do
+      subject[:foo] = 'bla'
+      subject[:_name] = 'haha'
+      subject.attributes.should == {:foo=>"bla"}
+    end
+  end
+
   describe "property with no type converter" do
     let(:klass) do
       Class.new(Hash) do

@@ -8,6 +8,8 @@ require 'neo4j-wrapper/node_mixin/class_methods'
 require 'neo4j-wrapper/node_mixin/initialize'
 
 require 'neo4j-wrapper/properties/class_methods'
+require 'neo4j-wrapper/properties/instance_methods'
+
 
 require 'neo4j-wrapper/has_n/class_methods'
 require 'neo4j-wrapper/has_n/decl_rel'

@@ -15,11 +15,11 @@ module Neo4j
   #
   # = Class Method Modules
   # * {Neo4j::Wrapper::ClassMethods}
-  # * {Neo4j::Wrapper::NodeMixin::ClassMethods}
-  # * {Neo4j::Wrapper::Property::ClassMethods}
-  # * {Neo4j::Wrapper::HasN::ClassMethods}
-  # * {Neo4j::Wrapper::Find}
-  # * {Neo4j::Wrapper::Rule::ClassMethods}
+  # * {Neo4j::Wrapper::NodeMixin::ClassMethods} - redefines the <tt>new</tt> method
+  # * {Neo4j::Wrapper::Property::ClassMethods} - defines <tt>property</tt> method
+  # * {Neo4j::Wrapper::HasN::ClassMethods} - defines <tt>has_n</tt>  and <tt>has_one</tt> method
+  # * {Neo4j::Wrapper::Find} - defines <tt>find</tt> method
+  # * {Neo4j::Wrapper::Rule::ClassMethods} - defines <tt>rule</tt> method
   # * {http://rdoc.info/github/andreasronge/neo4j-core/master/Neo4j/Core/Index/ClassMethods Neo4j::Core::Index::ClassMethods}
   #
   # = Instance Method Modules
@@ -29,6 +29,7 @@ module Neo4j
     include Neo4j::Wrapper::NodeMixin::Initialize
     include Neo4j::Wrapper::HasN::InstanceMethods
     include Neo4j::Wrapper::Rule::InstanceMethods
+    include Neo4j::Wrapper::Property::InstanceMethods
     include Neo4j::Core::Index
 
     # @private
