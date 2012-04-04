@@ -10,7 +10,7 @@ module Neo4j
         wrapped_node
       end
 
-      # Creates an alias to the original new method:  <tt>orig_new</t>
+      # Creates an alias to the original new method:  <tt>orig_new</tt>
       # @private
       def self.extended(klass)
         klass.instance_eval do

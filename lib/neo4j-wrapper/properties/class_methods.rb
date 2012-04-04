@@ -129,8 +129,7 @@ module Neo4j
         # @see Neo4j::TypeConverters::DefaultConverter
         def _converter(prop_name)
           prop_conf = _decl_props[prop_name.to_sym]
-          Neo4j::TypeConverters::DefaultConverter unless prop_conf
-          prop_conf[:converter]
+          (prop_conf && prop_conf[:converter]) || Neo4j::TypeConverters::DefaultConverter
         end
 
         # Returns true if the given property name has been defined with the class

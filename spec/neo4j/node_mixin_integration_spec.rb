@@ -10,6 +10,20 @@ describe Neo4j::NodeMixin, :type => :integration do
     end
   end
 
+  let(:base_class) do
+    new_node_mixin_class
+  end
+
+  let(:sub_class) do
+    new_node_mixin_class(base_class)
+  end
+
+  let(:other_class) do
+    new_node_mixin_class do
+      property :name
+    end
+  end
+
   before(:each) { new_tx }
   after(:each) { finish_tx }
 
@@ -69,6 +83,36 @@ describe Neo4j::NodeMixin, :type => :integration do
       Neo4j::Node.load(n.neo_id).should == n
     end
   end
+
+  describe "NodeMixin.load_entity" do
+    it "should load the correct class" do
+      n = base_class.new
+      finish_tx
+      base_class.load_entity(n.neo_id).should == n
+    end
+
+    it "can't be loaded by a different class" do
+      n = base_class.new
+      finish_tx
+      lambda { other_class.load_entity(n.neo_id) }.should raise_error
+    end
+
+    it "can be loaded by a baseclass" do
+      n = sub_class.new
+      finish_tx
+      n.should be_kind_of(base_class)
+      base_class.load_entity(n.neo_id).should == n
+    end
+
+    it "can not be loaded by a subclass" do
+      n = base_class.new
+      finish_tx
+      n.should be_kind_of(base_class)
+      lambda { sub_class.load_entity(n.neo_id) }.should raise_error
+    end
+
+  end
+
 
   describe "a inherited class" do
     let(:employee_class) do

@@ -47,6 +47,19 @@ module Neo4j
         end
 
         alias_method :create, :new
+
+        # Loads a wrapped node from the database given a neo id.
+        # @param [#to_i, nil] neo_id
+        # @raise an exception if the loaded node/relationship is not of the same kind as this class.
+        # @return [Object, nil] If the node does not exist it will return nil otherwise the loaded node or wrapped node.
+        def load_entity(neo_id)
+          node = Neo4j::Node.load(neo_id)
+          return nil if node.nil?
+          return node if node.class == Neo4j::Node
+          raise "Expected loaded node #{neo_id} to be of type #{self} but it was #{node.class}" unless node.kind_of?(self)
+          node
+        end
+
       end
     end
   end

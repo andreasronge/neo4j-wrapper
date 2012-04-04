@@ -33,4 +33,17 @@ describe Neo4j::RelationshipMixin, :type => :integration do
     end
 
   end
+
+  describe "load_entity" do
+    it "should load the correct class" do
+      n = friend_class.new(:knows, person_a, person_b)
+      finish_tx
+      friend_class.load_entity(n.neo_id).should == n
+    end
+
+    it "should return nil if given nil" do
+      friend_class.load_entity(nil).should be_nil
+    end
+  end
+
 end
