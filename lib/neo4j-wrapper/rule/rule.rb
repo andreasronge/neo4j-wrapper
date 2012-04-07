@@ -17,7 +17,15 @@ module Neo4j
           @triggers = [@triggers] if @triggers && !@triggers.respond_to?(:each)
           @functions = [@functions] if @functions && !@functions.respond_to?(:each)
           @filter = block
-          @bulk_update = !@functions.nil? && @functions.size == 1 && @functions.first.class.function_name == :count && @filter.nil?
+          @bulk_update = bulk_update
+        end
+
+        def bulk_update
+          return false if @filter
+          return true if @functions.nil?
+          # only one function allowed for bulk update
+          return false if @functions.size != 1
+          @functions.first.class.function_name == :size
         end
 
         def to_s

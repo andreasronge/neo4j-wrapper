@@ -28,7 +28,7 @@ require 'neo4j-wrapper/rule/event_listener'
 require 'neo4j-wrapper/rule/rule'
 require 'neo4j-wrapper/rule/rule_node'
 require 'neo4j-wrapper/rule/functions/function'
-require 'neo4j-wrapper/rule/functions/count'
+require 'neo4j-wrapper/rule/functions/size'
 require 'neo4j-wrapper/rule/functions/sum'
 
 require 'neo4j/type_converters/type_converters'

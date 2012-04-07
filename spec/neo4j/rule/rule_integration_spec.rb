@@ -33,8 +33,8 @@ end
 
 describe "Neo4j::Node#rule", :type => :integration do
 
-  before(:each) { new_tx}
-  after(:each) { finish_tx}
+  before(:each) { new_tx }
+  after(:each) { finish_tx }
 
   it "generate instance method: <rule_name>? for each rule" do
     young = Reader.new :age => 2
@@ -45,7 +45,7 @@ describe "Neo4j::Node#rule", :type => :integration do
 
   it "instance method <rule_name>?  return true if the rule evaluates to true" do
     young = Reader.new :age => 2
-    old   = Reader.new :age => 20
+    old = Reader.new :age => 20
 
     young.should be_young
     old.should be_old
@@ -78,7 +78,7 @@ describe "Neo4j::Node#rule", :type => :integration do
     Reader.young.should include(b)
   end
 
-    #Run this test alone to reproduce the issue
+  #Run this test alone to reproduce the issue
 
   it "rule node created from concurrent threads" do
     Neo4j.threadlocal_ref_node = nil
@@ -93,7 +93,7 @@ describe "Neo4j::Node#rule", :type => :integration do
         tx.success
         tx.finish
       end
-     end
+    end
     threads.each(&:join)
     Reader.all.count.should == 50
   end
@@ -179,7 +179,7 @@ describe "Neo4j::Node#rule", :type => :integration do
   end
 
   it "add nodes to rule group when a relationship is created" do
-    user  = Reader.new :age => 2
+    user = Reader.new :age => 2
     story = NewsStory.new :featured => true, :publish_date => 2009
     story.readers << user
 
@@ -189,7 +189,7 @@ describe "Neo4j::Node#rule", :type => :integration do
   end
 
   it "add nodes to rule group when a related node updates its property (trigger_rules)" do
-    user  = Reader.new :age => 200
+    user = Reader.new :age => 200
     story = NewsStory.new :featured => true, :publish_date => 2009
     story.readers << user
 
@@ -204,7 +204,7 @@ describe "Neo4j::Node#rule", :type => :integration do
 
 
   it "add nodes to rule group when a related node is deleted (trigger_rules)" do
-    user  = Reader.new :age => 2
+    user = Reader.new :age => 2
     story = NewsStory.new :featured => true, :publish_date => 2009
     story.readers << user
 
@@ -225,7 +225,7 @@ describe "Neo4j::Node#rule", :type => :integration do
 
     before(:each) do
       new_tx
-      @subject     = MaleReader.new
+      @subject = MaleReader.new
       @subject.age = 25
       finish_tx
     end
@@ -252,8 +252,8 @@ describe "Neo4j::Node#rule", :type => :integration do
 
     before(:each) do
       new_tx
-      @subject               = FastReader.new
-      @subject.age           = 25
+      @subject = FastReader.new
+      @subject.age = 25
       @subject.reading_speed = 0
       finish_tx
     end
@@ -277,5 +277,25 @@ describe "Neo4j::Node#rule", :type => :integration do
         FastReader.all.should include(subject)
       end
     end
+  end
+
+  it "should be optimized if only using one rule (bulk_trigger)" do
+    class FooBar42
+      include Neo4j::NodeMixin
+      rule :all
+    end
+
+    rule_node = Neo4j::Wrapper::Rule::Rule.rule_node_for(FooBar42)
+    rule_node.rules.size.should == 1
+    rule_node.rules.first.should be_bulk_update
+
+    FooBar42.all.to_a.size.should == 0
+    FooBar42.all.count.should == 0
+
+    b = FooBar42.new
+    finish_tx
+
+    FooBar42.all.should include(b)
+    FooBar42.all.count.should == 1
   end
 end

@@ -193,7 +193,7 @@ module Neo4j
         def classes_changed(total)
           @rules.each do |rule|
             if rule.bulk_update?
-              rule.functions.first.classes_changed(rule.rule_name, rule_node, total)
+              rule.functions && rule.functions.first.classes_changed(rule.rule_name, rule_node, total)
               total.added.each { |node| connect(rule.rule_name, node) }
               total.deleted.each { |node| break_connection(rule.rule_name, node) }
             end

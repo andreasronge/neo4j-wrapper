@@ -1,29 +1,22 @@
 require 'spec_helper'
 
-describe Neo4j::Wrapper::Rule::Functions::Count, :type => :integration do
+describe Neo4j::Wrapper::Rule::Functions::Size, :type => :integration do
   before(:each) { new_tx }
   after(:each) { finish_tx }
 
-  context "rule :all, :functions => Count.new" do
+  context "rule :all, :functions => Size.new" do
     let(:klass) do
       clazz = new_node_mixin_class do
         property :age
       end
-      clazz.rule(:all, :functions => Neo4j::Wrapper::Rule::Functions::Count.new)
+      clazz.rule(:all, :functions => Neo4j::Wrapper::Rule::Functions::Size.new)
       clazz
     end
-
-    #before(:all) do
-    #  klass = new_node_mixin_class do
-    #    property :age
-    #  end
-    #  klass.rule(:all, :functions => Neo4j::Wrapper::Rule::Functions::Count.new)
-    #end
 
     context "for a subclass" do
       class CountBaseClass
         include Neo4j::NodeMixin
-        rule(:all, :functions => Count.new)
+        rule(:all, :functions => Size.new)
       end
 
       class CountSubClass < CountBaseClass
@@ -36,62 +29,62 @@ describe Neo4j::Wrapper::Rule::Functions::Count, :type => :integration do
         new_tx
       end
 
-      it "should update the counter when deleted" do
-        CountBaseClass.count(:all).should == 0
+      it "should update the size property when deleted" do
+        CountBaseClass.size(:all).should == 0
         node = CountBaseClass.new
         new_tx
-        CountBaseClass.count(:all).should == 1
+        CountBaseClass.size(:all).should == 1
         node.del
         new_tx
-        CountBaseClass.count(:all).should == 0
+        CountBaseClass.size(:all).should == 0
       end
 
-      it "should update the counter when deleted for subclass" do
-        CountSubClass.count(:all).should == 0
+      it "should update the size property when deleted for subclass" do
+        CountSubClass.size(:all).should == 0
         node = CountSubClass.new
         new_tx
-        CountSubClass.count(:all).should == 1
+        CountSubClass.size(:all).should == 1
         node.del
         new_tx
-        CountSubClass.count(:all).should == 0
+        CountSubClass.size(:all).should == 0
       end
 
-      it "should update counter for only subclass when a new subclass is created" do
+      it "should update size property for only subclass when a new subclass is created" do
         CountSubClass.new
         new_tx
-        CountBaseClass.count(:all).should == 1
-        CountSubClass.count(:all).should == 1
+        CountBaseClass.size(:all).should == 1
+        CountSubClass.size(:all).should == 1
 
         CountBaseClass.new
         new_tx
-        CountBaseClass.count(:all).should == 2
-        CountSubClass.count(:all).should == 1
-        CountSubClass.all.count.should == 1
+        CountBaseClass.size(:all).should == 2
+        CountSubClass.size(:all).should == 1
+        CountSubClass.all.size.should == 1
       end
 
-      it "should update counter for both baseclass and subclass" do
+      it "should update size property for both baseclass and subclass" do
         CountBaseClass.new
         new_tx
-        CountSubClass.count(:all).should == 0
-        CountBaseClass.count(:all).should == 1
+        CountSubClass.size(:all).should == 0
+        CountBaseClass.size(:all).should == 1
 
         CountSubClass.new
         new_tx
-        CountSubClass.count(:all).should == 1
-        CountBaseClass.count(:all).should == 2
+        CountSubClass.size(:all).should == 1
+        CountBaseClass.size(:all).should == 2
       end
     end
 
 
     context "when empty group" do
-      it ".count(:all).should == 0" do
-        klass.count(:all).should == 0
+      it ".size(:all).should == 0" do
+        klass.size(:all).should == 0
       end
 
-      it ".count(:all).should == 1 when a new node has been created" do
+      it ".size(:all).should == 1 when a new node has been created" do
         klass.new
         new_tx
-        klass.count(:all).should == 1
+        klass.size(:all).should == 1
       end
     end
 
@@ -101,32 +94,32 @@ describe Neo4j::Wrapper::Rule::Functions::Count, :type => :integration do
         new_tx
       end
 
-      it ".count(:all).should == 1" do
-        klass.count(:all).should == 1
+      it ".size(:all).should == 1" do
+        klass.size(:all).should == 1
       end
 
-      it "when deleted .count(:all).should == 0" do
-        klass.count(:all).should == 1
+      it "when deleted .size(:all).should == 0" do
+        klass.size(:all).should == 1
         @node.del
         new_tx
-        klass.count(:all).should == 0
+        klass.size(:all).should == 0
       end
 
-      it ".count(:all).should == 2 when another node is created" do
+      it ".size(:all).should == 2 when another node is created" do
         klass.new
         new_tx
-        klass.count(:all).should == 2
+        klass.size(:all).should == 2
       end
     end
   end
 
-  context "rule(:young, :functions => Count.new){ age < 30}" do
+  context "rule(:young, :functions => Size.new){ age < 30}" do
 
     let(:klass) do
       clazz = new_node_mixin_class do
         property :age
       end
-      clazz.rule(:young, :functions => Neo4j::Wrapper::Rule::Functions::Count.new) { age && age < 30 }
+      clazz.rule(:young, :functions => Neo4j::Wrapper::Rule::Functions::Size.new) { age && age < 30 }
       clazz
     end
 
@@ -134,29 +127,29 @@ describe Neo4j::Wrapper::Rule::Functions::Count, :type => :integration do
     #  klass = new_node_mixin_class do
     #    property :age
     #  end
-    #  klass.rule(:young, :functions => Neo4j::Wrapper::Rule::Functions::Count.new) { age && age < 30 }
+    #  klass.rule(:young, :functions => Neo4j::Wrapper::Rule::Functions::Size.new) { age && age < 30 }
     #end
 
 
     context "when empty group" do
-      it ".count(:young).should == 0" do
-        klass.count(:young).should == 0
+      it ".size(:young).should == 0" do
+        klass.size(:young).should == 0
       end
 
-      it ".count(:young) should == 1 when a new young node has been created" do
+      it ".size(:young) should == 1 when a new young node has been created" do
         klass.new :age => 5
         new_tx
-        klass.count(:young).should == 1
+        klass.size(:young).should == 1
       end
 
-      it ".count(:young) should == 0 when a NOT new young node has been created" do
+      it ".size(:young) should == 0 when a NOT new young node has been created" do
         klass.new :age => 124
         new_tx
-        klass.count(:young).should == 0
+        klass.size(:young).should == 0
       end
 
-      it ".young.count should == 0" do
-        klass.young.count.should == 0
+      it ".young.size should == 0" do
+        klass.young.size.should == 0
       end
     end
 
@@ -166,30 +159,30 @@ describe Neo4j::Wrapper::Rule::Functions::Count, :type => :integration do
         new_tx
       end
 
-      it ".count(:young).should == 0" do
-        klass.count(:young).should == 0
+      it ".size(:young).should == 0" do
+        klass.size(:young).should == 0
       end
 
-      it "when deleted the .count(:young).should == 0" do
+      it "when deleted the .size(:young).should == 0" do
         @node.del
         new_tx
-        klass.count(:young).should == 0
-        klass.young.count.should == 0
+        klass.size(:young).should == 0
+        klass.young.size.should == 0
       end
 
-      it "when the node is changed into a young node (changed property), .count(:young).should == 1" do
+      it "when the node is changed into a young node (changed property), .size(:young).should == 1" do
         @node.age = 4
         new_tx
-        klass.count(:young).should == 1
-        klass.young.count.should == 1
+        klass.size(:young).should == 1
+        klass.young.size.should == 1
       end
 
-      it "when creating two young nodes, .count(:young).should == 2" do
+      it "when creating two young nodes, .size(:young).should == 2" do
         klass.new :age => 4
         klass.new :age => 5
         new_tx
-        klass.count(:young).should == 2
-        klass.young.count.should == 2
+        klass.size(:young).should == 2
+        klass.young.size.should == 2
       end
     end
 
@@ -199,16 +192,16 @@ describe Neo4j::Wrapper::Rule::Functions::Count, :type => :integration do
         new_tx
       end
 
-      it ".count(:young).should == 1" do
-        klass.count(:young).should == 1
-        klass.young.count.should == 1
+      it ".size(:young).should == 1" do
+        klass.size(:young).should == 1
+        klass.young.size.should == 1
       end
 
-      it "when deleted the .count(:young).should == 0" do
+      it "when deleted the .size(:young).should == 0" do
         @node.del
         new_tx
-        klass.count(:young).should == 0
-        klass.young.count.should == 0
+        klass.size(:young).should == 0
+        klass.young.size.should == 0
       end
     end
   end

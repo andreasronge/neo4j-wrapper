@@ -4,7 +4,7 @@ module Neo4j
       module Functions
 
         # A function for counting number of nodes of a given class.
-        class Count < Function
+        class Size < Function
           def initialize
             @property = '_classname'
             @@lock ||= Java::java.lang.Object.new
@@ -39,7 +39,7 @@ module Neo4j
           end
 
           def self.function_name
-            :count
+            :size
           end
         end
       end

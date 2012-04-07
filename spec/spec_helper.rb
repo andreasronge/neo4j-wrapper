@@ -55,20 +55,23 @@ def new_tx
   @tx = Neo4j::Transaction.new
 end
 
-Neo4j::Config[:storage_path] = File.join(Dir.tmpdir, "neo4j_core_integration_rspec")
-FileUtils.rm_rf Neo4j::Config[:storage_path]
 
 RSpec.configure do |c|
   c.filter_run_excluding :slow => ENV['TRAVIS'] != 'true'
 
-  c.after(:each, :type => :integration) do
-    finish_tx
+  c.before(:suite) do
+    Neo4j::Config[:storage_path] = File.join(Dir.tmpdir, "neo4j_wrapper_integration_rspec")
+    FileUtils.rm_rf Neo4j::Config[:storage_path]
+    Dir.mkdir(Neo4j::Config[:storage_path])
+  end
+
+  c.after(:suite) do
+    Neo4j.shutdown if Neo4j.running?
+    FileUtils.rm_rf Neo4j::Config[:storage_path]
   end
 
   c.before(:all, :type => :mock_db) do
     Neo4j.shutdown
-    Neo4j::Config[:storage_path] = File.join(Dir.tmpdir, "neo4j_core_integration_rspec")
-    FileUtils.rm_rf Neo4j::Config[:storage_path]
     Neo4j::Core::Database.default_embedded_db= MockDb
     Neo4j.start
   end
@@ -99,7 +102,7 @@ module TempModel
           "#{name}"
         end
     RUBY
-    klass.send(:include,  mixin) unless klass.kind_of?(mixin)
+    klass.send(:include, mixin) unless klass.kind_of?(mixin)
     Kernel.const_set(name, klass)
     klass
   end
