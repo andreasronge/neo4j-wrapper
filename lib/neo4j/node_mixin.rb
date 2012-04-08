@@ -41,33 +41,14 @@ module Neo4j
       klass.extend Neo4j::Core::Index::ClassMethods
       klass.extend Neo4j::Wrapper::Find
       klass.extend Neo4j::Wrapper::Rule::ClassMethods
-
       klass.send(:include, Neo4j::Wrapper::Rule::Functions)
-
-
-      klass.node_indexer do
-        index_names :exact => "#{klass._index_name}_exact", :fulltext => "#{klass._index_name}_fulltext"
-        trigger_on :_classname => klass.to_s
-        prefix_index_name &klass.method(:index_prefix)
-      end
+      klass.setup_node_index
 
       def klass.inherited(sub_klass)
-        return super if sub_klass.to_s == self.to_s
-        base_class = self
-
-        # make the base class trigger on the sub class nodes
-        base_class._indexer.config.trigger_on :_classname => sub_klass.to_s
-
-        sub_klass.inherit_rules_from self
-
-        sub_klass.node_indexer do
-          inherit_from base_class
-          index_names :exact => "#{sub_klass._index_name}_exact", :fulltext => "#{sub_klass._index_name}_fulltext"
-          trigger_on :_classname => sub_klass.to_s
-          prefix_index_name &sub_klass.method(:index_prefix)
-        end
+        setup_neo4j_subclass(sub_klass)
         super
       end
+
       super
     end
 

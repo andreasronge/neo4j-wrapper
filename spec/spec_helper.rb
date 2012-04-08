@@ -89,7 +89,7 @@ module TempModel
   def new(base_class, mixin, &block)
     klass = Class.new(base_class)
     setup(klass, mixin)
-    base_class.inherited(klass) if base_class.respond_to?(:inherited)
+    base_class.inherited(klass) if base_class.respond_to?(:inherited) && base_class.to_s != klass.to_s
     klass.class_eval(&block) if block
     klass
   end
