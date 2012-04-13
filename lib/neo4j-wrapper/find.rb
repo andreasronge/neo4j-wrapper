@@ -48,7 +48,7 @@ module Neo4j
       # @example
       #   Person.find(:since => (1.year.ago .. Time.now))
       # @see http://rdoc.info/github/andreasronge/neo4j-core/Neo4j/Core/Index/Indexer#find-instance_method Neo4j::Core::Index::ClassMethods#find
-      def find(*query_params)
+      def find(*query_params, &block)
         query = query_params.first
         if query.is_a?(Hash)
           query.each_pair do |k, v|
@@ -57,7 +57,7 @@ module Neo4j
             query[k] = value
           end
         end
-        _orig_find(*query_params)
+        _orig_find(*query_params, &block)
       end
 
     end

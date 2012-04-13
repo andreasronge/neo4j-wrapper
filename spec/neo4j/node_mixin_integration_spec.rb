@@ -94,7 +94,7 @@ describe Neo4j::NodeMixin, :type => :integration do
     it "can't be loaded by a different class" do
       n = base_class.new
       finish_tx
-      lambda { other_class.load_entity(n.neo_id) }.should raise_error
+      other_class.load_entity(n.neo_id).should be_nil
     end
 
     it "can be loaded by a baseclass" do
@@ -108,7 +108,7 @@ describe Neo4j::NodeMixin, :type => :integration do
       n = base_class.new
       finish_tx
       n.should be_kind_of(base_class)
-      lambda { sub_class.load_entity(n.neo_id) }.should raise_error
+      sub_class.load_entity(n.neo_id).should be_nil
     end
 
   end
