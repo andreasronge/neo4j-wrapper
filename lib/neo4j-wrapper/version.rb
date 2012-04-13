@@ -1,5 +1,5 @@
 module Neo4j
   module Wrapper
-    VERSION = '0.0.3'
+    VERSION = '0.0.4'
   end
 end
