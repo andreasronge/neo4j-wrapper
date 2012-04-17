@@ -53,14 +53,21 @@ module Neo4j
         #      has_one(:folder).from(FolderNode, :files)
         #   end
         #
+        # @example Using Cypher
+        #   # from FolderNode example above
+        #   folder.files.query{ cypher query DSL, see neo4j-core}
+        #   folder.files{ } # same as above
+        #   folder.files.query(:name => 'file.txt') # a cypher query with WHERE and statements
+        #   folder.files(:name => 'file.txt') # same as above
+        #   folder.files.query.to_s # the cypher query explained as a String
         #
-        # @return [Neo4j::Wrapper::HasN::DeclRel] a DSL object where the has_n relationship can be futher specified
+        # @return [Neo4j::Wrapper::HasN::DeclRel] a DSL object where the has_n relationship can be further specified
         def has_n(rel_type)
           clazz = self
           module_eval(%Q{
-                def #{rel_type}
+                def #{rel_type}(cypher_hash_query = nil, &cypher_block)
                     dsl = _decl_rels_for('#{rel_type}'.to_sym)
-                    Neo4j::Wrapper::HasN::Nodes.new(self, dsl)
+                    Neo4j::Wrapper::HasN::Nodes.new(self, dsl, cypher_hash_query, &cypher_block)
                 end}, __FILE__, __LINE__)
 
 
@@ -107,7 +114,7 @@ module Neo4j
               end}, __FILE__, __LINE__)
 
           module_eval(%Q{def #{rel_type}
-                  dsl = _decl_rels_for(:#{rel_type})
+                  dsl = _decl_rels_for('#{rel_type}'.to_sym)
                   dsl.single_node(self)
               end}, __FILE__, __LINE__)
 

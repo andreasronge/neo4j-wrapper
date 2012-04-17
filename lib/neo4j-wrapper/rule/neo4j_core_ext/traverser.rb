@@ -12,6 +12,7 @@ module Neo4j
           self
         end
 
+
         def functions_method(func, rule_node, rule_name)
           singelton = class << self;
             self;

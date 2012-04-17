@@ -8,11 +8,9 @@ describe Neo4j::Wrapper::HasN::Nodes do
   end
 
   let(:target_class) do
-    Class.new do
-      def self.to_s
-        "TargetClass"
-      end
-    end
+    klass = Class.new
+    TempModel.setup(klass)
+    klass
   end
 
   let(:decl_rel) do

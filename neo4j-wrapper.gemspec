@@ -27,5 +27,5 @@ It comes included with the Apache Lucene document database.
   s.extra_rdoc_files = %w( README.rdoc )
   s.rdoc_options = ["--quiet", "--title", "Neo4j.rb", "--line-numbers", "--main", "README.rdoc", "--inline-source"]
 
-  s.add_dependency("neo4j-core", "0.0.9")
+  s.add_dependency("neo4j-core", "0.0.10")
 end
