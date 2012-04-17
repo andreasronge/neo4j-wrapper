@@ -1,5 +1,6 @@
 source :gemcutter
 
+#gem 'neo4j-core', :path => '/home/andreas/projects/neo4j-core'
 gemspec
 
 group 'test' do

@@ -134,6 +134,9 @@ module Neo4j
 
         # @macro  node.delegate
         delegate :getId
+
+        # @macro  node.delegate
+        delegate :getRelationships
       end
     end
   end

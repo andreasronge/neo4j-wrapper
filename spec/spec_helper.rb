@@ -94,7 +94,7 @@ module TempModel
     klass
   end
 
-  def setup(klass, mixin)
+  def setup(klass, mixin=nil)
     name = "TestClass_#{@@_counter}"
     @@_counter += 1
     klass.class_eval <<-RUBY
@@ -102,7 +102,7 @@ module TempModel
           "#{name}"
         end
     RUBY
-    klass.send(:include, mixin) unless klass.kind_of?(mixin)
+    klass.send(:include, mixin) unless mixin.nil? || klass.kind_of?(mixin)
     Kernel.const_set(name, klass)
     klass
   end

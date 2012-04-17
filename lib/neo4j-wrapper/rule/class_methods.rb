@@ -102,9 +102,9 @@ module Neo4j
           end
 
           # define class methods
-          singleton.send(:define_method, rule_name) do
+          singleton.send(:define_method, rule_name) do |*args, &block|
             rule_node = Rule.rule_node_for(self)
-            rule_node.traversal(rule_name)
+            rule_node.traversal(rule_name, args.first, &block)
           end unless respond_to?(rule_name)
 
           # define instance methods
@@ -129,7 +129,7 @@ module Neo4j
         end
 
         # Assigns the reference node for a class via a supplied block.
-        # Example of usage:
+        # @example usage:
         #   class Person
         #     include Neo4j::NodeMixin
         #     ref_node { Neo4j.default_ref_node }

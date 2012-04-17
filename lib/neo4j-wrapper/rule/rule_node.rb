@@ -97,17 +97,21 @@ module Neo4j
 
         # Return a traversal object with methods for each rule and function.
         # E.g. Person.all.old or Person.all.sum(:age)
-        def traversal(rule_name)
+        def traversal(rule_name, cypher_query_hash = nil, &cypher_block)
           traversal = rule_node.outgoing(rule_name)
-          @rules.each do |rule|
-            traversal.filter_method(rule.rule_name) do |path|
-              path.end_node.rel?(:incoming, rule.rule_name)
+          if cypher_query_hash || cypher_block
+            traversal.query(cypher_query_hash, &cypher_block)
+          else
+            @rules.each do |rule|
+              traversal.filter_method(rule.rule_name) do |path|
+                path.end_node.rel?(:incoming, rule.rule_name)
+              end
+              rule.functions && rule.functions.each do |func|
+                traversal.functions_method(func, self, rule_name)
+              end
             end
-            rule.functions && rule.functions.each do |func|
-              traversal.functions_method(func, self, rule_name)
-            end
+            traversal
           end
-          traversal
         end
 
         def find_function(rule_name, function_name, function_id)

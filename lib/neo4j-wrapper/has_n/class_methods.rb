@@ -54,13 +54,13 @@ module Neo4j
         #   end
         #
         #
-        # @return [Neo4j::Wrapper::HasN::DeclRel] a DSL object where the has_n relationship can be futher specified
+        # @return [Neo4j::Wrapper::HasN::DeclRel] a DSL object where the has_n relationship can be further specified
         def has_n(rel_type)
           clazz = self
           module_eval(%Q{
-                def #{rel_type}
+                def #{rel_type}(cypher_hash_query = nil, &cypher_block)
                     dsl = _decl_rels_for('#{rel_type}'.to_sym)
-                    Neo4j::Wrapper::HasN::Nodes.new(self, dsl)
+                    Neo4j::Wrapper::HasN::Nodes.new(self, dsl, cypher_hash_query, &cypher_block)
                 end}, __FILE__, __LINE__)
 
 
@@ -106,9 +106,13 @@ module Neo4j
                   dsl.create_relationship_to(self, value) if value
               end}, __FILE__, __LINE__)
 
-          module_eval(%Q{def #{rel_type}
-                  dsl = _decl_rels_for(:#{rel_type})
-                  dsl.single_node(self)
+          module_eval(%Q{def #{rel_type}(cypher_hash_query, &cypher_block)
+                  dsl = _decl_rels_for('#{rel_type}'.to_sym)
+                  if cypher_hash_query || cypher_block
+                    Neo4j::Wrapper::HasN::Nodes.new(self, dsl, cypher_hash_query, &cypher_block).first
+                  else
+                    dsl.single_node(self)
+                  end
               end}, __FILE__, __LINE__)
 
           module_eval(%Q{def #{rel_type}_rel

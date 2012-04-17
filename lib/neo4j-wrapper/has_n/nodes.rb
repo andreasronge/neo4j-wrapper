@@ -9,13 +9,38 @@ module Neo4j
         include Enumerable
         include Neo4j::Core::ToJava
 
-        def initialize(node, decl_rel) # :nodoc:
+        def initialize(node, decl_rel, cypher_query_hash = nil, &cypher_block) # :nodoc:
           @node = node
           @decl_rel = decl_rel
+          @cypher_block = cypher_block
+          @cypher_query_hash = cypher_query_hash
+
+          rule_node = Neo4j::Wrapper::Rule::Rule.rule_node_for(@decl_rel.target_class)
+
+          singelton = class << self;
+            self;
+          end
+          rule_node && rule_node.rules.each do |rule|
+            # {|r| puts "-->Rule #{r.rule_name.inspect}"}
+            singelton.send(:define_method, rule.rule_name) do |*cypher_query_hash, &cypher_block|
+
+              proc = Proc.new do |m|
+                r0 = m.incoming(:dangerous)
+                if cypher_block
+                  self.instance_exec(m, &cypher_block)
+                end
+              end
+              query(cypher_query_hash.first, &proc)
+            end
+          end
         end
 
         def to_s
           "HasN::Nodes [#{@decl_rel.dir}, id: #{@node.neo_id} type: #{@decl_rel && @decl_rel.rel_type} decl_rel:#{@decl_rel}]"
+        end
+
+        def query(cypher_query_hash = nil, &block)
+          Neo4j::Core::Traversal::CypherQuery.new(@node.neo_id, @decl_rel.dir, [@decl_rel.rel_type], cypher_query_hash, &block)
         end
 
         # Traverse the relationship till the index position
@@ -35,7 +60,13 @@ module Neo4j
 
         # Required by the Enumerable mixin.
         def each
-          @decl_rel.each_node(@node) { |n| yield n } # Should use yield here as passing &block through doesn't always work (why?)
+          if @cypher_block || @cypher_query_hash
+            puts "GOT CYPHER BLOCK"
+            query(@cypher_query_hash, &@cypher_block).each { |i| yield i }
+            puts "-----"
+          else
+            @decl_rel.each_node(@node) { |n| yield n } # Should use yield here as passing &block through doesn't always work (why?)
+          end
         end
 
         # returns none wrapped nodes, you may get better performance using this method
