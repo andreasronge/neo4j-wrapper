@@ -102,9 +102,9 @@ module Neo4j
           end
 
           # define class methods
-          singleton.send(:define_method, rule_name) do |*args, &block|
+          singleton.send(:define_method, rule_name) do |*args, &cypher_block|
             rule_node = Rule.rule_node_for(self)
-            rule_node.traversal(rule_name, args.first, &block)
+            rule_node.traversal(rule_name, args.first, &cypher_block)
           end unless respond_to?(rule_name)
 
           # define instance methods

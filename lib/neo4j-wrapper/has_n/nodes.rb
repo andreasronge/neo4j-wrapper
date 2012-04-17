@@ -21,7 +21,7 @@ module Neo4j
             self;
           end
           rule_node && rule_node.rules.each do |rule|
-            # {|r| puts "-->Rule #{r.rule_name.inspect}"}
+            next if rule.rule_name == :all
             singelton.send(:define_method, rule.rule_name) do |*cypher_query_hash, &cypher_block|
 
               proc = Proc.new do |m|
@@ -61,9 +61,7 @@ module Neo4j
         # Required by the Enumerable mixin.
         def each
           if @cypher_block || @cypher_query_hash
-            puts "GOT CYPHER BLOCK"
             query(@cypher_query_hash, &@cypher_block).each { |i| yield i }
-            puts "-----"
           else
             @decl_rel.each_node(@node) { |n| yield n } # Should use yield here as passing &block through doesn't always work (why?)
           end
