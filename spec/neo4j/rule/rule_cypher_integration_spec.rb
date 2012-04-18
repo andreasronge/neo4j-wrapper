@@ -65,10 +65,6 @@ describe "cypher queries for and has_n", :type => :integration do
   describe "Monster.all(:strength => 17)" do
     it "uses cypher " do
       Monster.all(:strength => 17).first.should == @basilisk
-      #puts "RET #{Monster.all(:strength => 17).class}"
-      #Monster.all(:strength => 17){|x| x.distinct}.to_a.size.should == 1
-      #Monster.dangerous(:strength => 17).to_a.size.should == 1
-      #Monster.dangerous.query.count.should == 1
     end
 
     it "can explain the cypher query as a String" do
