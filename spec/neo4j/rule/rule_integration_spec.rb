@@ -43,6 +43,14 @@ describe "Neo4j::Node#rule", :type => :integration do
     young.should respond_to(:all?)
   end
 
+  it "has only one rule relationship to the rule node for each rule" do
+    young = Reader.new :age => 2
+    finish_tx
+    young._rels(:incoming, :all ).count.should == 1
+    young._rels(:incoming, :young ).count.should == 1
+    young._rels(:incoming, :old ).count.should == 0
+  end
+
   it "instance method <rule_name>?  return true if the rule evaluates to true" do
     young = Reader.new :age => 2
     old = Reader.new :age => 20
@@ -130,6 +138,14 @@ describe "Neo4j::Node#rule", :type => :integration do
     NewsStory.all.featured.embargoed.should_not include(c)
   end
 
+
+  it "has only one rule relationship at most for each rule" do
+    a = NewsStory.new :publish_date => 2011, :featured => true
+    finish_tx
+    a._rels(:incoming, :embargoed ).count.should == 1
+    a._rels(:incoming, :all ).count.should == 1
+    a._rels(:incoming, :featured ).count.should == 1
+  end
 
   it "remove nodes from rule group when a property change" do
     a = Reader.new :age => 25

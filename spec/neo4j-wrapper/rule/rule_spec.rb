@@ -31,10 +31,4 @@ describe Neo4j::Wrapper::Rule::Rule do
     end
   end
 
-
-  describe "trigger?" do
-    it "" do
-
-    end
-  end
 end

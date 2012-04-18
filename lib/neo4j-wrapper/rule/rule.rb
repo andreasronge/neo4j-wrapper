@@ -122,6 +122,7 @@ module Neo4j
 
           def bulk_trigger_rules(classname, class_change, map)
             rule_node = rule_node_for(classname)
+            return if rule_node.rules.size > 1 # this optimization is not allowed when using more then one rule
             rule_node.classes_changed(class_change)
             if (clazz = rule_node.model_class.superclass) && clazz.include?(Neo4j::NodeMixin)
               bulk_trigger_rules(clazz.name, class_change, map) if clazz.to_s != "Neo4j::Rails::Model"
