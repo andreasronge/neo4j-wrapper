@@ -14,18 +14,21 @@ module Neo4j
           @decl_rel = decl_rel
           @cypher_block = cypher_block
           @cypher_query_hash = cypher_query_hash
+          self.class.define_rule_methods_on(self, decl_rel)
+        end
 
-          rule_node = Neo4j::Wrapper::Rule::Rule.rule_node_for(@decl_rel.target_class)
+        def self.define_rule_methods_on(instance, decl_rel )
+          rule_node = Neo4j::Wrapper::Rule::Rule.rule_node_for(decl_rel.target_class)
 
-          singelton = class << self;
+          singelton = class << instance;
             self;
           end
+
           rule_node && rule_node.rules.each do |rule|
             next if rule.rule_name == :all
             singelton.send(:define_method, rule.rule_name) do |*cypher_query_hash, &cypher_block|
-
               proc = Proc.new do |m|
-                r0 = m.incoming(:dangerous)
+                m.incoming(rule.rule_name)
                 if cypher_block
                   self.instance_exec(m, &cypher_block)
                 end
@@ -36,7 +39,11 @@ module Neo4j
         end
 
         def to_s
-          "HasN::Nodes [#{@decl_rel.dir}, id: #{@node.neo_id} type: #{@decl_rel && @decl_rel.rel_type} decl_rel:#{@decl_rel}]"
+          if @cypher_block || @cypher_query_hash
+            query(@cypher_query_hash, &@cypher_block).to_s
+          else
+            "HasN::Nodes [#{@decl_rel.dir}, id: #{@node.neo_id} type: #{@decl_rel && @decl_rel.rel_type} decl_rel:#{@decl_rel}]"
+          end
         end
 
         def query(cypher_query_hash = nil, &block)

@@ -96,6 +96,11 @@ describe "cypher queries for and has_n", :type => :integration do
     end
   end
 
+  describe "sorting: dungeon.monsters{|m| ret(m).asc(m[:strength])}" do
+    it "should sort" do
+      @dungeon.monsters{|m| ret(m).asc(m[:strength])}.map{|x| x[:strength]}.should == [10,13,17]
+    end
+  end
 
   describe "return a different relationship: @dungeon.monsters.dangerous { |m| rooms = m.incoming(Room.monsters); rooms} " do
     it "uses cypher" do
