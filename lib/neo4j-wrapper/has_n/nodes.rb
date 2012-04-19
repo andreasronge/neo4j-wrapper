@@ -27,6 +27,7 @@ module Neo4j
           rule_node && rule_node.rules.each do |rule|
             next if rule.rule_name == :all
             singelton.send(:define_method, rule.rule_name) do |*cypher_query_hash, &cypher_block|
+              raise "Not a hash, can't create a cypher where clause'" if cypher_query_hash.first && !cypher_query_hash.first.is_a?(Hash)
               proc = Proc.new do |m|
                 m.incoming(rule.rule_name)
                 if cypher_block
@@ -37,6 +38,7 @@ module Neo4j
             end
           end
         end
+
 
         def to_s
           if @cypher_block || @cypher_query_hash
