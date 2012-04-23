@@ -4,24 +4,18 @@ require 'spec_helper'
 describe Neo4j::Wrapper::HasN::ClassMethods do
 
   let(:base) do
-    Class.new do
+    base = Class.new do
       extend Neo4j::Wrapper::HasN::ClassMethods
-
-      def self.to_s
-        "BaseClass"
-      end
-
     end
+    TempModel.setup(base)
   end
 
   let(:other) do
-    Class.new do
+    other = Class.new do
       extend Neo4j::Wrapper::HasN::ClassMethods
-
-      def self.to_s
-        "OtherClass"
-      end
     end
+
+    TempModel.setup(other)
   end
 
   let(:sub) do
@@ -37,7 +31,7 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
 
     describe "foo (classmethod)" do
       subject { base.things }
-      it { should == "things" }
+      it { should == :things }
     end
 
     describe "_decl_rels[:things]" do
@@ -47,8 +41,8 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
 
       it { should be_kind_of(Neo4j::Wrapper::HasN::DeclRel) }
       its(:has_one?) { should be_false }
-      its(:rel_type) { should == "things" }
-      its(:target_class) { should == base }
+      its(:rel_type) { should == :things }
+      its(:target_class) { should be_nil }
       its(:source_class) { should == base }
       its(:dir) { should == :outgoing }
     end
@@ -63,8 +57,8 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
       end
 
       its(:has_one?) { should be_false }
-      its(:rel_type) { should == "things" }
-      its(:target_class) { should == base }
+      its(:rel_type) { should == :things }
+      its(:target_class) { should be_nil }
       its(:source_class) { should == base }
       its(:dir) { should == :outgoing }
 
@@ -77,26 +71,52 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
   end
 
   describe "#has_n(:stuff).to(OtherClass)" do
-    before do
-      base.has_n(:stuff).to(other)
-    end
-
-    describe "stuff (classmethod)" do
-      subject { base.stuff }
-      it { should == "BaseClass#stuff" }
-    end
-
-    describe "_decl_rels[:stuff]" do
-      subject do
-        base._decl_rels[:stuff]
+    context "the to arg is a String" do
+      before do
+        base.has_n(:stuff).to(other.to_s)
       end
 
-      it { should be_kind_of(Neo4j::Wrapper::HasN::DeclRel) }
-      its(:has_one?) { should be_false }
-      its(:rel_type) { should == "BaseClass#stuff" }
-      its(:target_class) { should == other }
-      its(:source_class) { should == base }
-      its(:dir) { should == :outgoing }
+      describe "stuff (classmethod)" do
+        subject { base.stuff }
+        it { should == :"#{base}#stuff" }
+      end
+
+      describe "_decl_rels[:stuff]" do
+        subject do
+          base._decl_rels[:stuff]
+        end
+
+        it { should be_kind_of(Neo4j::Wrapper::HasN::DeclRel) }
+        its(:has_one?) { should be_false }
+        its(:rel_type) { should == :"#{base}#stuff" }
+        its(:target_class) { should == other }
+        its(:source_class) { should == base }
+        its(:dir) { should == :outgoing }
+      end
+    end
+
+    context "the to arg is a Class" do
+      before do
+        base.has_n(:stuff).to(other)
+      end
+
+      describe "stuff (classmethod)" do
+        subject { base.stuff }
+        it { should == :"#{base}#stuff" }
+      end
+
+      describe "_decl_rels[:stuff]" do
+        subject do
+          base._decl_rels[:stuff]
+        end
+
+        it { should be_kind_of(Neo4j::Wrapper::HasN::DeclRel) }
+        its(:has_one?) { should be_false }
+        its(:rel_type) { should == :"#{base}#stuff" }
+        its(:target_class) { should == other }
+        its(:source_class) { should == base }
+        its(:dir) { should == :outgoing }
+      end
     end
   end
 
@@ -107,7 +127,7 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
 
     describe "stuff (classmethod)" do
       subject { base.known_by }
-      it { should == "knows" }
+      it { should == :knows }
     end
 
     describe "_decl_rels[:known_by]" do
@@ -117,8 +137,8 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
 
       it { should be_kind_of(Neo4j::Wrapper::HasN::DeclRel) }
       its(:has_one?) { should be_false }
-      its(:rel_type) { should == "knows" }
-      its(:target_class) { should == base }
+      its(:rel_type) { should == :knows }
+      its(:target_class) { should be_nil }
       its(:source_class) { should == base }
       its(:dir) { should == :incoming }
     end
@@ -137,7 +157,27 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
 
       it { should be_kind_of(Neo4j::Wrapper::HasN::DeclRel) }
       its(:has_one?) { should be_false }
-      its(:rel_type) { should == "OtherClass#knows" }
+      its(:rel_type) { should == "#{other}#knows".to_sym }
+      its(:target_class) { should == other }
+      its(:source_class) { should == base }
+      its(:dir) { should == :incoming }
+    end
+  end
+
+  describe "#has_n(:known_by).from('OtherClass', :knows)" do
+    before do
+      other.has_n(:knows)
+      base.has_n(:known_by).from(other.to_s, :knows)
+    end
+
+    describe "_decl_rels[:known_by]" do
+      subject do
+        base._decl_rels[:known_by]
+      end
+
+      it { should be_kind_of(Neo4j::Wrapper::HasN::DeclRel) }
+      its(:has_one?) { should be_false }
+      its(:rel_type) { should == "#{other}#knows".to_sym }
       its(:target_class) { should == other }
       its(:source_class) { should == base }
       its(:dir) { should == :incoming }
@@ -152,7 +192,7 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
 
     describe "stuff (known_by)" do
       subject { base.known_by }
-      it { should == "OtherClass#knows" }
+      it { should == :"#{other}#knows" }
     end
 
     describe "_decl_rels[:known_by]" do
@@ -162,12 +202,63 @@ describe Neo4j::Wrapper::HasN::ClassMethods do
 
       it { should be_kind_of(Neo4j::Wrapper::HasN::DeclRel) }
       its(:has_one?) { should be_true }
-      its(:rel_type) { should == "OtherClass#knows" }
+      its(:rel_type) { should == "#{other}#knows".to_sym }
       its(:target_class) { should == other }
       its(:source_class) { should == base }
       its(:dir) { should == :incoming }
     end
   end
 
+
+  describe "#has_n(:knows).to(Person).relationship(Role)" do
+    let(:role_class) { TempModel.setup(Class.new) }
+
+    describe "#has_n(:known_by).from(Person.knows)" do
+      before do
+        base.has_n(:knows).to(other).relationship(role_class)
+        other.has_n(:known_by).from(base.knows)
+      end
+      context "start node" do
+        subject do
+          base._decl_rels[:knows]
+        end
+        its(:relationship_class) { should == role_class }
+        its(:rel_type) { should == :"#{base}#knows"}
+      end
+
+
+      context "end node" do
+        subject do
+          other._decl_rels[:known_by]
+        end
+        its(:relationship_class) { should == role_class }
+        its(:rel_type) { should == :"#{base}#knows"}
+      end
+    end
+
+    describe "#has_n(:known_by).from(Person, 'knows')" do
+      before do
+        base.has_n(:knows).to(other).relationship(role_class)
+        other.has_n(:known_by).from(base, "knows")
+      end
+      context "start node" do
+        subject do
+          base._decl_rels[:knows]
+        end
+        its(:relationship_class) { should == role_class }
+        its(:rel_type) { should == :"#{base}#knows"}
+      end
+
+
+      context "end node" do
+        subject do
+          other._decl_rels[:known_by]
+        end
+        its(:relationship_class) { should == role_class }
+        its(:rel_type) { should == :"#{base}#knows"}
+      end
+    end
+
+  end
 
 end

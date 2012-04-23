@@ -32,7 +32,7 @@ describe Neo4j::Wrapper::HasN::Nodes do
   describe "#[]" do
     it "calls each x times and returns the outgoing node" do
       result = [MockRelationship.new(:friends, node), MockRelationship.new(:friends, node)]
-      node.should_receive(:rels).with(:outgoing, "friends").and_return(result)
+      node.should_receive(:rels).with(:outgoing, :friends).and_return(result)
       subject[1].should == result[1].end_node
     end
   end
@@ -46,7 +46,7 @@ describe Neo4j::Wrapper::HasN::Nodes do
       it "returns all end nodes" do
         a, b = MockRelationship.new(:friends, node), MockRelationship.new(:friends, node)
         result = [a, b]
-        node.should_receive(:_rels).with(:outgoing, "friends").and_return(result)
+        node.should_receive(:_rels).with(:outgoing, :friends).and_return(result)
 
         q = []
         subject._each do |x|
@@ -65,7 +65,7 @@ describe Neo4j::Wrapper::HasN::Nodes do
       it "returns all end nodes" do
         a, b = MockRelationship.new(:friends, MockNode.new, node), MockRelationship.new(:friends, MockNode.new, node)
         result = [a, b]
-        node.should_receive(:_rels).with(:incoming, "other").and_return(result)
+        node.should_receive(:_rels).with(:incoming, :other).and_return(result)
 
         q = []
         subject._each do |x|
@@ -83,7 +83,7 @@ describe Neo4j::Wrapper::HasN::Nodes do
       it "returns all end nodes" do
         a, b = MockRelationship.new(:friends, node), MockRelationship.new(:friends, node)
         result = [a, b]
-        node.should_receive(:rels).with(:outgoing, "friends").and_return(result)
+        node.should_receive(:rels).with(:outgoing, :friends).and_return(result)
 
         q = []
         subject.each do |x|
@@ -102,7 +102,7 @@ describe Neo4j::Wrapper::HasN::Nodes do
       it "returns all end nodes" do
         a, b = MockRelationship.new(:friends, MockNode.new, node), MockRelationship.new(:friends, MockNode.new, node)
         result = [a, b]
-        node.should_receive(:rels).with(:incoming, "other").and_return(result)
+        node.should_receive(:rels).with(:incoming, :other).and_return(result)
 
         q = []
         subject.each do |x|

@@ -37,7 +37,7 @@ describe Neo4j::Wrapper::HasN::DeclRel do
       it "creates a new relationship" do
         from = MockNode.new
         to = MockNode.new
-        Neo4j::Relationship.should_receive(:new).with("friends", from, to)
+        Neo4j::Relationship.should_receive(:new).with(:friends, from, to)
         decl_rel.create_relationship_to(from, to)
       end
     end
@@ -47,7 +47,7 @@ describe Neo4j::Wrapper::HasN::DeclRel do
         from = MockNode.new
         to = MockNode.new
         decl_rel.from(:bla)
-        Neo4j::Relationship.should_receive(:new).with("bla", to, from)
+        Neo4j::Relationship.should_receive(:new).with(:bla, to, from)
         decl_rel.create_relationship_to(from, to)
       end
     end
@@ -58,7 +58,7 @@ describe Neo4j::Wrapper::HasN::DeclRel do
         to = MockNode.new
         rel_wrapper = Class.new
         decl_rel.relationship(rel_wrapper)
-        rel_wrapper.should_receive(:new).with("friends", from, to)
+        rel_wrapper.should_receive(:new).with(:friends, from, to)
         decl_rel.create_relationship_to(from, to)
       end
     end
@@ -78,9 +78,9 @@ describe Neo4j::Wrapper::HasN::DeclRel do
         decl_rel.from(:other)
       end
 
-      its(:rel_type) { should == 'other' }
+      its(:rel_type) { should == :other }
       its(:dir) { should == :incoming }
-      its(:target_class) { should == original_target_class }
+      its(:target_class) { should be_nil }
       its(:source_class) { should == original_target_class }
       its(:relationship_class) { should be_nil }
     end
@@ -98,7 +98,7 @@ describe Neo4j::Wrapper::HasN::DeclRel do
         decl_rel.from(from_class, :other)
       end
 
-      its(:rel_type) { should == 'FromClass#other' }
+      its(:rel_type) { should == :'FromClass#other' }
       its(:dir) { should == :incoming }
       its(:target_class) { should == from_class }
       its(:source_class) { should == original_target_class }
@@ -121,9 +121,9 @@ describe Neo4j::Wrapper::HasN::DeclRel do
         decl_rel.to(:bar)
       end
 
-      its(:rel_type) { should == "bar" }
+      its(:rel_type) { should == :bar }
       its(:dir) { should == :outgoing }
-      its(:target_class) { should == original_target_class }
+      its(:target_class) { should be_nil }
       its(:source_class) { should == original_target_class }
       its(:relationship_class) { should be_nil }
     end
@@ -133,7 +133,7 @@ describe Neo4j::Wrapper::HasN::DeclRel do
         decl_rel.to(new_target_class)
       end
 
-      its(:rel_type) { should == "OriginalTargetClass#friends" }
+      its(:rel_type) { should == :"OriginalTargetClass#friends" }
       its(:dir) { should == :outgoing }
       its(:target_class) { should == new_target_class }
       its(:source_class) { should == original_target_class }

@@ -33,30 +33,30 @@ module Neo4j
       # <b>File#folder</b> ::       for accessing nodes from relationship 'files' from the outgoing Folder node
       #
       class DeclRel
-        attr_reader :target_class, :source_class, :dir, :rel_type
+        attr_reader :source_class, :dir, :rel_type
 
-        def initialize(method_id, has_one, target_class)
+        def initialize(method_id, has_one, source_class)
           @method_id = method_id
           @has_one = has_one
-          @target_class = target_class
           @dir = :outgoing
-          @rel_type = method_id.to_s
-          @source_class = target_class
+          @rel_type = method_id.to_sym
+          @source_class = source_class
         end
 
         def inherit_new
           base = self
-          dr = DeclRel.new(@method_id, @has_one, @target_class)
+          dr = DeclRel.new(@method_id, @has_one, @source_class)
           dr.instance_eval do
             @dir = base.dir
             @rel_type = base.rel_type
+            @target_name = base.target_name if base.target_name
             @source_class = base.source_class
           end
           dr
         end
 
         def to_s
-          "DeclRel #{object_id} dir: #{@dir} rel_id: #{@method_id}, rel_type: #{@rel_type}, target_class:#{@target_class} rel_class:#{@relationship}"
+          "DeclRel #{object_id} dir: #{@dir} rel_id: #{@method_id}, rel_type: #{@rel_type}, target_class:#{@target_name} rel_class:#{@relationship}"
         end
 
         # @return [true, false]
@@ -75,13 +75,15 @@ module Neo4j
         end
 
 
-        # Specifies an outgoing relationship.
-        # The name of the outgoing class will be used as a prefix for the relationship used.
+        # Declares an outgoing relationship type.
+        # It is possible to prefix relationship types so that it's possible to distinguish different incoming relationships.
+        # There is no validation that the added node is of the specified class.
         #
         # @example Example
         #   class FolderNode
         #     include Neo4j::NodeMixin
         #     has_n(:files).to(FileNode)
+        #     has_one(:root).to("FileSystem") # also possible, if the class is not defined yet
         #   end
         #
         #  folder = FolderNode.new
@@ -99,18 +101,20 @@ module Neo4j
         #   # create an outgoing relationship of type 'contains' from folder node to file
         #   folder.files << FolderNode.new
         #
-        # @param [Class] target the other class to which this relationship goes
+        # @param [Class, String, Symbol] target the other class to which this relationship goes (if String or Class) or the relationship (if Symbol)
+        # @param [Class, String, Symbol] rel_type the rel_type postfix for the relationships, which defaults to the same as the has_n/one method id
         # @return self
-        def to(target)
+        def to(target, rel_type = @method_id)
           @dir = :outgoing
 
-          if Class === target
+          if Class === target || String === target
             # handle e.g. has_n(:friends).to(class)
-            @target_class = target
-            @rel_type = "#{@source_class}##{@method_id}"
+            @target_name = target
+            @rel_type = "#{@source_class}##{rel_type}".to_sym
           elsif Symbol === target
-            # handle e.g. has_n(:friends).to(:knows)
-            @rel_type = target.to_s
+            # handle e.g. has_n(:friends).to(:knows) or to("Person#friends")
+            @target_name = target.to_s.split("#")[0] if target.to_s.include?("#")
+            @rel_type = target.to_sym
           else
             raise "Expected a class or a symbol for, got #{target}/#{target.class}"
           end
@@ -129,7 +133,8 @@ module Neo4j
         #   class FileNode
         #     include Neo4j::NodeMixin
         #     # will only traverse any incoming relationship of type files from node FileNode
-        #     has_one(:folder).from(FolderNode, :files)
+        #     has_one(:folder).from(FolderNode.files)
+        #     # alternative: has_one(:folder).from(FolderNode, :files) 
         #   end
         #
         #   file = FileNode.new
@@ -158,14 +163,18 @@ module Neo4j
 
           if args.size > 1
             # handle specified (prefixed) relationship, e.g. has_n(:known_by).from(clazz, :type)
-            @target_class = args[0]
-            @rel_type = "#{@target_class}##{args[1]}"
+            @target_name = args[0]
             @relationship_name = args[1].to_sym
+            @rel_type = "#{@target_name}##{args[1]}".to_sym
           elsif Symbol === args[0]
             # handle unspecified (unprefixed) relationship, e.g. has_n(:known_by).from(:type)
-            @rel_type = args[0].to_s
+            name = args[0].to_s
+            if name.include?("#")
+              @target_name, @relationship_name = name.split("#").map(&:to_sym)
+            end
+            @rel_type = args[0]
           else
-            raise "Expected a symbol for, got #{args[0]}"
+            raise "Expected a symbol for, got #{args[0].inspect}"
           end
           self
         end
@@ -195,19 +204,28 @@ module Neo4j
           self
         end
 
+        # @private
+        def target_name
+          @target_name
+        end
 
         # @private
         def relationship_class # :nodoc:
-          if !@relationship_name.nil? && @relationship.nil?
-            other_class_dsl = @target_class._decl_rels[@relationship_name]
+          if @dir == :incoming
+            other_class_dsl = target_class && target_class._decl_rels[@relationship_name]
             if other_class_dsl
               @relationship = other_class_dsl.relationship_class
             else
-              Neo4j.logger.warn "Unknown outgoing relationship #{@relationship_name} on #{@target_class}"
+              Neo4j.logger.warn "Unknown outgoing relationship #{@relationship_name} on #{@target_name}"
             end
           end
           @relationship
         end
+
+        def target_class
+          @target_name && (@target_name.is_a?(Class) ? @target_name : Neo4j::Wrapper.to_class(@target_name.to_s))
+        end
+
 
         # @private
         def each_node(node, &block)

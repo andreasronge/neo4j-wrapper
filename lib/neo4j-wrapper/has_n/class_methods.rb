@@ -41,6 +41,7 @@ module Neo4j
         #   class FolderNode
         #      include Ne4j::NodeMixin
         #      has_n(:files).to(File)
+        #      Same as has_n(:files).to("File")
         #   end
         #
         #   FolderNode.files #=> 'File#files' the name of the relationship
@@ -50,6 +51,8 @@ module Neo4j
         #   # generate accessor method for traversing and adding relationship on incoming nodes.
         #   class FileNode
         #      include Ne4j::NodeMixin
+        #      has_one(:folder).from(FolderNode.files)
+        #      # or same as
         #      has_one(:folder).from(FolderNode, :files)
         #   end
         #
@@ -79,7 +82,7 @@ module Neo4j
 
           instance_eval(%Q{
           def #{rel_type}
-            _decl_rels[:#{rel_type}].rel_type.to_s
+            _decl_rels[:#{rel_type}].rel_type
           end}, __FILE__, __LINE__)
 
           _decl_rels[rel_type.to_sym] = DeclRel.new(rel_type, false, clazz)
@@ -125,7 +128,7 @@ module Neo4j
 
           instance_eval(%Q{
           def #{rel_type}
-            _decl_rels[:#{rel_type}].rel_type.to_s
+            _decl_rels[:#{rel_type}].rel_type
           end}, __FILE__, __LINE__)
 
           _decl_rels[rel_type.to_sym] = DeclRel.new(rel_type, true, clazz)
