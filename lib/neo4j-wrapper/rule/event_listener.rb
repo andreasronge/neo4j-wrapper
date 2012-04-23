@@ -29,7 +29,7 @@ module Neo4j
 
             id = node.neo_id
             rule_node.rules.each do |rule|
-              next if rule.functions.nil? || rule.bulk_update?
+              next if rule.functions.nil? || (rule_node.rules.size == 1 && rule.bulk_update?)
               rule_name = rule.rule_name.to_s
 
               # is the rule node deleted ?
