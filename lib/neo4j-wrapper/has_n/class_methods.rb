@@ -41,7 +41,7 @@ module Neo4j
         #   class FolderNode
         #      include Ne4j::NodeMixin
         #      has_n(:files).to(File)
-        #      Same as has_n(:files).to("File")
+        #      # Same as has_n(:files).to("File")
         #   end
         #
         #   FolderNode.files #=> 'File#files' the name of the relationship

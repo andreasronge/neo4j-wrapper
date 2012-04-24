@@ -11,8 +11,9 @@ describe Neo4j::TypeConverters::StringConverter do
   its(:to_java, nil)  { should be_nil }
   its(:to_java, 'aa') { should === 'aa' }
   its(:to_java, 123)  { should === '123' }
+  its(:to_java, %w[1 2 3])  { should === %w[1 2 3] }
 
   its(:to_ruby, nil)  { should be_nil }
   its(:to_ruby, 'aa') { should === 'aa' }
-  its(:to_ruby, 123)  { should === '123' }
+  its(:to_ruby, 123)  { should === 123 }
 end

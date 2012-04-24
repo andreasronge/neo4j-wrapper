@@ -14,6 +14,8 @@ describe Neo4j::TypeConverters::FixnumConverter do
   its(:to_java, 123)   { should == 123 }
   its(:to_java, 123)   { should == 123 }
   its(:to_java, -123)  { should == -123 }
+  its(:to_java, [1, 2, 3])  { should == [1,2,3] }
+
   # TODO: Where does Bignum fits?
   its(:to_java, 999999999999999)  { should == 999999999999999 }
 

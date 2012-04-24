@@ -13,8 +13,9 @@ describe Neo4j::TypeConverters::FloatConverter do
   its(:to_java, nil)    { should be_nil }
   its(:to_java, 123.12) { should === 123.12 }
   its(:to_java, '12.3') { should === 12.3 }
+  its(:to_java, [1.2, 2.3, 3.4])  { should === [1.2, 2.3, 3.4] }
 
   its(:to_ruby, nil)     { should be_nil }
   its(:to_ruby, 12.34)   { should === 12.34 }
-  its(:to_ruby, '12.34') { should === 12.34 }
+  its(:to_ruby, '12.34') { should === "12.34" }
 end

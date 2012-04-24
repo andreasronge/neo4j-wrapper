@@ -115,12 +115,12 @@ module Neo4j
 
         def to_java(value)
           return nil if value.nil?
-          value.to_s
+          Array === value ? value.map(&:to_s)  : value.to_s
         end
 
         def to_ruby(value)
           return nil if value.nil?
-          value.to_s
+          value
         end
 
         def index_as
@@ -141,12 +141,12 @@ module Neo4j
 
         def to_java(value)
           return nil if value.nil?
-          value.to_i
+          Array === value ? value.map(&:to_i) : value.to_i
         end
 
         def to_ruby(value)
           return nil if value.nil?
-          value.to_i
+          value#.to_i
         end
 
         def index_as
@@ -165,12 +165,12 @@ module Neo4j
 
         def to_java(value)
           return nil if value.nil?
-          value.to_f
+          Array === value ? value.map(&:to_f) : value.to_f
         end
 
         def to_ruby(value)
           return nil if value.nil?
-          value.to_f
+          value
         end
 
         def index_as
