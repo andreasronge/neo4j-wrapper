@@ -1,11 +1,11 @@
 == Neo4j-wrapper {<img src="https://secure.travis-ci.org/andreasronge/neo4j-wrapper.png" />}[http://travis-ci.org/andreasronge/neo4j-wrapper]
 
 This contains the Ruby wrapper of the Neo4j::Node and Neo4j::Relationship java object defined in the neo4j-core gem.
-The neo4j.rb gem will be split up into several gems, neo4j-core, neo4j-wrapper and neo4j-rails (?)
-This gem will be included by neo4j 2.0.0 gem.
+This gem is included in neo4j 2.0.0 gem.
 
 == Docs
 
+* {Github Wiki}[http://github.com/andreasronge/neo4j/wiki]
 * {YARD}[http://rdoc.info/github/andreasronge/neo4j-wrapper/file/README.rdoc]
 
 == The public API
