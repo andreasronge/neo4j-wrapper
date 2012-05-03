@@ -1,7 +1,7 @@
 == Neo4j-wrapper {<img src="https://secure.travis-ci.org/andreasronge/neo4j-wrapper.png" />}[http://travis-ci.org/andreasronge/neo4j-wrapper]
 
 This contains the Ruby wrapper of the Neo4j::Node and Neo4j::Relationship java object defined in the neo4j-core gem.
-This gem is included in neo4j 2.0.0 gem.
+This gem is included in neo4j.
 
 == Docs
 
@@ -62,3 +62,10 @@ Changes from the neo4j.rb
 This gem contains two modules: Neo4j and Neo4j::Wrapper
 The Neo4j module is public and the Neo4j::Wrapper(::*) are private modules.
 
+=== License
+* neo4j-wrapper - MIT, see the LICENSE file http://github.com/andreasronge/neo4j-wrapper/tree/master/LICENSE.
+* Lucene -  Apache, see http://lucene.apache.org/java/docs/features.html
+* \Neo4j - Dual free software/commercial license, see http://neo4j.org/
+
+Notice there are different license for the neo4j-community, neo4j-advanced and neo4j-enterprise jar gems.
+Only the neo4j-community gem is by default required.
