@@ -1,0 +1,6 @@
+== 2.0.1 / 2012-06-07
+
+* Remove annoying "Unknown outgoing relationship" logs #3
+* Added missing method for start_node, #1
+
+== 2.0.0 / 2012-06-05

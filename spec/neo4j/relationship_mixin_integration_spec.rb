@@ -34,6 +34,19 @@ describe Neo4j::RelationshipMixin, :type => :integration do
 
   end
 
+  describe "start_node" do
+    it "loads the wrapped start node" do
+      f = friend_class.new(:knows, person_a, person_b)
+      f.start_node.class.should == person_class
+    end
+
+    it "loads the wrapped end_node node" do
+      f = friend_class.new(:knows, person_a, person_b)
+      f.end_node.class.should == person_class
+    end
+
+  end
+
   describe "load_entity" do
     it "should load the correct class" do
       n = friend_class.new(:knows, person_a, person_b)
