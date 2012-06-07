@@ -213,12 +213,8 @@ module Neo4j
         def relationship_class # :nodoc:
           if @dir == :incoming
             other_class_dsl = target_class && target_class._decl_rels[@relationship_name]
-            if other_class_dsl
-              @relationship = other_class_dsl.relationship_class
-            else
-              Neo4j.logger.warn "Unknown outgoing relationship #{@relationship_name} on #{@target_name}"
-            end
-          end
+            @relationship = other_class_dsl.relationship_class if other_class_dsl
+           end
           @relationship
         end
 
