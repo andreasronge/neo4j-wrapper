@@ -4,15 +4,7 @@ require 'spec_helper'
 describe Neo4j::Wrapper::Rule::RuleNode do
 
   let(:ref_node) do
-    r = MockNode.new
-    java_node_klass = Class.new do
-      def synchronized(&block)
-        block.call
-      end
-    end
-
-    r.stub(:_java_node) { java_node_klass.new }
-    r
+    MockNode.new
   end
 
   let(:node_class) do
@@ -30,9 +22,13 @@ describe Neo4j::Wrapper::Rule::RuleNode do
     k
   end
 
+  let(:transaction) do
+    mock("Transaction")
+  end
+
   before do
     Neo4j.stub(:ref_node) { ref_node }
-    Neo4j::Transaction.stub(:run).and_yield
+    Neo4j::Transaction.stub(:run).and_yield(transaction)
   end
 
 
@@ -52,6 +48,10 @@ describe Neo4j::Wrapper::Rule::RuleNode do
 
   describe "rule_node" do
     let(:found_rule_node) { MockNode.new }
+    before do
+      transaction.should_receive(:acquire_write_lock)
+    end
+
     context "when rule node already exists" do
       before do
         ref_node.should_receive(:rel?).with(:outgoing, node_class.to_s).and_return(true)

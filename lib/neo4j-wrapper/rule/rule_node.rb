@@ -26,8 +26,10 @@ module Neo4j
         end
 
         def rule_node
-          ref_node._java_node.synchronized do
-            @@rule_nodes[key] ||= find_node || create_node
+          @@rule_nodes[key] ||= Neo4j::Transaction.run do |tx|
+            java_ref_node = ref_node._java_node
+            tx.acquire_write_lock(java_ref_node)
+            find_node(java_ref_node) || create_node(java_ref_node)
           end
         end
 
@@ -47,12 +49,10 @@ module Neo4j
           end
         end
 
-        def create_node
-          Neo4j::Transaction.run do
-            node = Neo4j::Node.new
-            ref_node.create_relationship_to(node, type_to_java(@classname))
-            node
-          end
+        def create_node(ref)
+          node = Neo4j::Node.new
+          ref.create_relationship_to(node, type_to_java(@classname))
+          node
         end
 
         def inherit(subclass)
@@ -61,8 +61,8 @@ module Neo4j
           end
         end
 
-        def find_node
-          ref_node.rel?(:outgoing, @classname.to_s) && ref_node._node(:outgoing, @classname.to_s)
+        def find_node(ref = ref_node)
+          ref.rel?(:outgoing, @classname.to_s) && ref_node._node(:outgoing, @classname.to_s)
         end
 
         def ref_node_changed?
