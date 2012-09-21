@@ -56,7 +56,7 @@ describe "cypher queries for and has_n", :type => :integration do
 
   describe "dungeon.monsters{|m| m.incoming(Room.monsters}[:name] == 'Treasure Room'" do
     it "uses cypher" do
-      @dungeon.monsters { |m| (m.incoming(Room.monsters)[:name] == 'Guard Room') & (m[:strength] > 12) }.first.should == @bugbear
+      @dungeon.monsters { |m| (m.incoming(Room.monsters)[:name] == 'Guard Room') & (m[:strength] > 12); ret(m) }.first.should == @bugbear
       # Same as (!)
       # START n0=node(6) MATCH (n0)-[:`Dungeon#monsters`]->(default_ret),(default_ret)<-[:`Room#monsters`]-(v1) WHERE (v1.name = "Guard Room") and (default_ret.strength > 12) RETURN default_ret'
     end
@@ -70,7 +70,7 @@ describe "cypher queries for and has_n", :type => :integration do
     it "can explain the cypher query as a String" do
       rule_node = Neo4j::Wrapper::Rule::Rule.rule_node_for(Monster)
       id = rule_node.rule_node.neo_id
-      Monster.all.query(:strength => 17).to_s.should == "START n0=node(#{id}) MATCH (n0)-[:`all`]->(default_ret) WHERE default_ret.strength = 17 RETURN default_ret"
+      Monster.all.query(:strength => 17).to_s.should == "START v2=node(#{id}) MATCH (v2)-[:`all`]->(v1) WHERE v1.strength = 17 RETURN v1"
     end
 
   end
@@ -88,13 +88,13 @@ describe "cypher queries for and has_n", :type => :integration do
 
     it "can be explained" do
       id = @dungeon.neo_id
-      @dungeon.monsters.dangerous { |m| m[:weapon?] == 'sword' }.to_s.should == "START n0=node(#{id}) MATCH (n0)-[:`Dungeon#monsters`]->(default_ret),(default_ret)<-[:`dangerous`]-(v1) WHERE default_ret.weapon? = \"sword\" RETURN default_ret"
+      @dungeon.monsters.dangerous { |m| m[:weapon?] == 'sword' }.to_s.should == "START v2=node(#{id}) MATCH (v2)-[:`Dungeon#monsters`]->(v1),(v1)<-[:`dangerous`]-(v3) WHERE v1.weapon? = \"sword\" RETURN v1"
     end
   end
 
-  describe "sorting: dungeon.monsters{|m| ret(m).asc(m[:strength])}" do
+  describe "sorting: @dungeon.monsters{|m| m[:strength].asc}" do
     it "should sort" do
-      @dungeon.monsters{|m| ret(m).asc(m[:strength])}.map{|x| x[:strength]}.should == [10,13,17]
+      @dungeon.monsters{|m| m[:strength].asc}.to_a.should == [10,13,17]
     end
   end
 
