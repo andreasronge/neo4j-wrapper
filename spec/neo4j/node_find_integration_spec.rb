@@ -21,6 +21,22 @@ describe Neo4j::NodeMixin, "find", :type => :integration do
     end
   end
 
+  describe 'fulltext search' do
+    class MyFullText
+      include Neo4j::NodeMixin
+      property :afield, :index => :fulltext
+    end
+
+    before do
+      MyFullText.new(:afield => 'something')
+      new_tx
+    end
+
+    it 'can find things' do
+      MyFullText.find('afield: something', :type => :fulltext).first.should_not be_nil
+    end
+  end
+
   context "with type conversion: property :year, :type => Fixnum" do
     let(:klass) do
       new_node_mixin_class do

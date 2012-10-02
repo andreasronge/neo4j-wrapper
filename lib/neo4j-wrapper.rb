@@ -1,5 +1,6 @@
 require 'neo4j-core'
 
+require 'set'
 require 'neo4j-wrapper/wrapper'
 require 'neo4j-wrapper/class_methods'
 require 'neo4j-wrapper/version'
