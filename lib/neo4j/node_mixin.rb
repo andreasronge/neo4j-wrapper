@@ -30,6 +30,7 @@ module Neo4j
     include Neo4j::Wrapper::HasN::InstanceMethods
     include Neo4j::Wrapper::Rule::InstanceMethods
     include Neo4j::Wrapper::Property::InstanceMethods
+    include Neo4j::Wrapper::Equal
     include Neo4j::Core::Index
 
     # @private
