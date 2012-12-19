@@ -214,9 +214,10 @@ module Neo4j
         end
 
         # Converts the given DateTime (UTC) value to an Fixnum.
-        # Only utc times are supported !
+        # DateTime values are automatically converted to UTC.
         def to_java(value)
           return nil if value.nil?
+          value = value.new_offset(0) if value.respond_to?(:new_offset)
           if value.class == Date
             Time.utc(value.year, value.month, value.day, 0, 0, 0).to_i
           else
@@ -274,7 +275,7 @@ module Neo4j
       def converters=(converters)
         @converters = converters
       end
-      
+
       # Always returns a converter that handles to_ruby or to_java
       # if +enforce_type+ is set to false then it will raise in case of unknown type
       # otherwise it will return the DefaultConverter.
