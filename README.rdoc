@@ -14,7 +14,7 @@ This gem is included in neo4j.
 
 {Neo4j::RelationshipMixin} The Java Relationship
 
-{Neo4j::IdentityMap} The Identity Map
+{Neo4j::IdentityMap} The Identity Map (should be disabled for batch imports and Rake scripts)
 
 == Example
 

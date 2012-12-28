@@ -8,12 +8,18 @@ module Neo4j
   # More information on Identity Map pattern:
   #   http://www.martinfowler.com/eaaCatalog/identityMap.html
   #
+  # The identity map cache is cleared after each transaction. When used from rails the Rack Middle ware
+  # will also make sure that the cache is emptied after each request.
+  #
+  # When used from batch import scripts (e.g. Rake) you should probably disable the identity map,
+  # because the identity map cache will not be used (the same object is not loaded more than once).
+  # If not used from rails and transactions does not occur then the cache will never be cleared and
+  # you will have a memory leak.
+  #
   # == Configuration
   #
   # In order to enable IdentityMap, set <tt>config.neo4j.identity_map = true</tt>
   # in your <tt>config/application.rb</tt> file. If used outside rails, set Neo4j::Config[:identity_map] = true.
-  #
-  # IdentityMap is disabled by default and still in development (i.e. use it with care).
   #
   module IdentityMap
 
