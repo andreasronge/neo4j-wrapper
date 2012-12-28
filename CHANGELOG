@@ -1,3 +1,9 @@
+== 2.2.3 / 2012-12-28
+* Automatically convert DateTimes to UTC, #7
+* get_or_create should return a wrapped node #8
+
+== 2.2.2 - skipped
+
 == 2.2.1 / 2012-12-17
 * Fix for JRuby 1.7.1, moved Equal mixin from neo4j-core to neo4j-wrapper, #6
 * Bumped version of neo4j-core to 2.2.1
