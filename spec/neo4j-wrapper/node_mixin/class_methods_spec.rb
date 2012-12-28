@@ -47,6 +47,10 @@ describe Neo4j::Wrapper::NodeMixin::ClassMethods do
           @hash && @hash[key]
         end
 
+        def self._load_wrapper(entity)
+          return entity
+        end
+
         node_indexer do
           index_names :exact => 'unique_node_index_exact'
         end

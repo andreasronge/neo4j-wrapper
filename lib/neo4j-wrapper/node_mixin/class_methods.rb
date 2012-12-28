@@ -60,12 +60,13 @@ module Neo4j
         #
         #   node = MyNode.get_or_create(:email =>'jimmy@gmail.com', :name => 'jimmy')
         #
+        # @note It must not be called in a transaction. It will create and finish a new transaction.
         # @see #put_if_absent
         def get_or_create(*args)
           props = args.first
           raise "Can't get or create entity since #{props.inspect} does not included unique key #{props[unique_factory_key]}'" unless props[unique_factory_key]
           index = index_for_type(_decl_props[unique_factory_key][:index])
-          Neo4j::Core::Index::UniqueFactory.new(unique_factory_key, index) { |*| new(*args) }.get_or_create(unique_factory_key, props[unique_factory_key])
+          Neo4j::Core::Index::UniqueFactory.new(unique_factory_key, index) { |*| new(*args) }.get_or_create(unique_factory_key, props[unique_factory_key]).wrapper
         end
 
         # @throws Exception if there are more then one property having unique index
