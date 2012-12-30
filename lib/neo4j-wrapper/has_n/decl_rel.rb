@@ -192,7 +192,9 @@ module Neo4j
         #   class Order
         #     property :total_cost
         #     property :dispatched
-        #     has_n(:products).to(Product).relationship(OrderLine)
+        #     has_n(:products).to(Product).relationship(OrderLine)                
+        #     # strings can also be passed in, for cases where the class may not be initialized yet:
+        #     # has_n(:products).to(Product).relationship('Order::Line')
         #   end
         #
         #  order = Order.new
