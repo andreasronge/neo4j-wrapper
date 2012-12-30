@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'active_support/core_ext/string/inflections'
 
 describe Neo4j::Wrapper::HasN::DeclRel do
 

@@ -217,7 +217,7 @@ module Neo4j
             other_class_dsl = target_class && target_class._decl_rels[@relationship_name]
             @relationship = other_class_dsl.relationship_class if other_class_dsl
           end
-          @relationship = @relationship.constantize if @relationship.is_a? String
+          @relationship = Neo4j::Wrapper.method(:to_class).call(@relationship) if @relationship.is_a? String
           @relationship
         end
 
