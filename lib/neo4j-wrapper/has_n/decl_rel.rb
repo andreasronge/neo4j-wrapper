@@ -192,7 +192,9 @@ module Neo4j
         #   class Order
         #     property :total_cost
         #     property :dispatched
-        #     has_n(:products).to(Product).relationship(OrderLine)
+        #     has_n(:products).to(Product).relationship(OrderLine)                
+        #     # strings can also be passed in, for cases where the class may not be initialized yet:
+        #     # has_n(:products).to(Product).relationship('Order::Line')
         #   end
         #
         #  order = Order.new
@@ -214,7 +216,8 @@ module Neo4j
           if @dir == :incoming
             other_class_dsl = target_class && target_class._decl_rels[@relationship_name]
             @relationship = other_class_dsl.relationship_class if other_class_dsl
-           end
+          end
+          @relationship = Neo4j::Wrapper.method(:to_class).call(@relationship) if @relationship.is_a? String
           @relationship
         end
 
