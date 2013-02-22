@@ -57,8 +57,9 @@ module Neo4j
         # @macro  node.delegate
         delegate :start_node, 'Relationship'
 
-        # @macro  node.delegate
-        delegate :end_node, 'Relationship'
+        def nodes
+          [start_node, end_node]
+        end
 
         # @macro  node.delegate
         delegate :other_node, 'Relationship'
