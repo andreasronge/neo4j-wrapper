@@ -1,3 +1,6 @@
+* Added support for Relationship#nodes wrapper, #10, David Butler
+* Allow Relationship types to be passed in as string in #relationship method, #9 Peter Ehrlich
+
 == 2.2.3 / 2012-12-28
 * Automatically convert DateTimes to UTC, #7
 * get_or_create should return a wrapped node #8
