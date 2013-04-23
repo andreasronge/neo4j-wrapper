@@ -40,7 +40,7 @@ module Neo4j
         base_class = self
         sub_klass.rel_indexer do
           inherit_from base_class unless base_class == sub_klass
-          index_names :exact => "#{sub_klass}_exact", :fulltext => "#{sub_klass}_fulltext"
+          index_names :exact => "#{sub_klass._index_name}_exact", :fulltext => "#{sub_klass._index_name}_fulltext"
           trigger_on :_classname => sub_klass.to_s
           prefix_index_name &sub_klass.method(:index_prefix)
         end

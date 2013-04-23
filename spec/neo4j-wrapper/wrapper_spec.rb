@@ -11,8 +11,23 @@ module Foo
     include Neo4j::Wrapper::RelationshipMixin::Initialize
   end
 
+  class MyRelWrapper43
+    extend Neo4j::Wrapper::ClassMethods
+    extend Neo4j::Core::Index::ClassMethods
+    extend Neo4j::Wrapper::Find
+    include Neo4j::Wrapper::RelationshipMixin::Initialize
+  end
+
 end
 
+describe Neo4j::Wrapper, "lucene index setup" do
+
+  it "should have a valid lucene index name" do
+    Foo::MyRelWrapper43.setup_rel_index
+
+    Foo::MyRelWrapper43.index_name_for_type(:exact).should == "Foo_MyRelWrapper43_exact"
+  end
+end
 describe Neo4j::Wrapper, 'wrapper' do
 
 
