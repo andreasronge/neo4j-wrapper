@@ -68,4 +68,19 @@ describe Neo4j::RelationshipMixin, :type => :integration do
     end
   end
 
+  describe "to_other" do
+    it "returns empty array when no relationship" do
+      a = person_class.new
+      b = person_class.new
+      a.rels.between(b).should be_empty
+    end
+
+    it "returns empty array when no relationship" do
+      a = person_class.new
+      b = person_class.new
+      r = friend_class.new(:friend, a,b)
+      a.rels(:outgoing, :friend).between(b).should_not be_empty
+    end
+
+  end
 end
