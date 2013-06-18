@@ -1,3 +1,6 @@
+== 2.3.0 / 2013-06-18
+Use neo4j-core 2.3.0
+
 == 2.2.4 / 2013-05-19
 * Added support for Relationship#nodes wrapper, #10, David Butler
 * Allow Relationship types to be passed in as string in #relationship method, #9 Peter Ehrlich
