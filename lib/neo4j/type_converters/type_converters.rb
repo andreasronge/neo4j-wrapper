@@ -249,8 +249,10 @@ module Neo4j
         # Only utc times are supported !
         def to_java(value)
           return nil if value.nil?
-          if value.class == Date
+          if value.is_a?(Date)
             Time.utc(value.year, value.month, value.day, 0, 0, 0).to_i
+          elsif value.is_a?(String)
+            Time.parse(value).utc.to_i
           else
             value.utc.to_i
           end
